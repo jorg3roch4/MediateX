@@ -220,3 +220,7 @@ _Pvt_Extensions
 # Project Rider
 *.iml
 .idea
+
+# Claude Code
+.claude/
+CLAUDE.md
