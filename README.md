@@ -1,11 +1,31 @@
 MediateX
 =====
 
-**Version 1.0.0** - Based on MediatR 12.5.0
+**Version 1.0.2** - Based on MediatR 12.5.0
 
 Modern mediator implementation for .NET 9+ with in-process messaging and zero external dependencies.
 
 Supports request/response, commands, queries, notifications and events, synchronous and async with intelligent dispatching via C# generic variance.
+
+## Author & Project Information
+
+**Author:** jorg3roch4
+**Project URL:** https://github.com/jorg3roch4/MediateX
+**Repository:** https://github.com/jorg3roch4/MediateX
+**NuGet Package:** https://www.nuget.org/packages/MediateX
+
+### Project Goals
+
+MediateX is an independent fork maintained specifically for modern .NET versions. The primary goals of this project are:
+
+- ✅ **Target .NET 9+** - Focus exclusively on modern .NET (LTS and STS releases)
+- ✅ **Stay Current** - Update to new .NET versions as they become available
+- ✅ **Modern C#** - Leverage the latest C# language features and performance improvements
+- ✅ **No Legacy Support** - Remove .NET Framework and older .NET Standard dependencies
+- ✅ **Performance** - Optimize for the latest .NET runtime improvements
+- ✅ **Maintenance** - Provide ongoing updates and bug fixes for the .NET 9+ ecosystem
+
+This project is maintained independently and will continue to evolve with each new .NET release, ensuring developers always have access to a mediator pattern implementation optimized for the latest .NET platform.
 
 ## About This Project
 
@@ -188,7 +208,7 @@ await _mediator.Publish(new UserCreatedNotification { UserId = 1, Email = "user@
 
 ## Credits and Attribution
 
-**MediateX 1.0.0** is based on **[MediatR 12.5.0](https://github.com/jbogard/MediatR)** created by [Jimmy Bogard](https://github.com/jbogard).
+**MediateX 1.0.2** is based on **[MediatR 12.5.0](https://github.com/jbogard/MediatR)** created by [Jimmy Bogard](https://github.com/jbogard).
 
 All core functionality, architecture, and design patterns are derived from the original MediatR project. MediateX maintains the same Apache 2.0 license and acknowledges the excellent work of Jimmy Bogard and all MediatR contributors.
 

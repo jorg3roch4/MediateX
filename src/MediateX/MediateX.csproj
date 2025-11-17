@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Authors>JR</Authors>
+    <Authors>jorg3roch4</Authors>
     <Description>Modern mediator implementation for .NET 9+ with in-process messaging. Supports request/response, CQRS, notifications, and events. Based on MediatR 12.5.0.</Description>
     <Copyright>Copyright (c) 2025 JR. Based on MediatR by Jimmy Bogard.</Copyright>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Features>strict</Features>
     <PackageTags>mediator;request;response;queries;commands;notifications;mediatex;cqrs;events;messaging;pipeline;net9</PackageTags>
-    <PackageProjectUrl>https://github.com/yourusername/MediateX</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/yourusername/MediateX</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/jorg3roch4/MediateX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\MediateX.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.0</Version>
-    <PackageReleaseNotes>Initial release of MediateX 1.0.0 - Modern .NET 9 mediator implementation based on MediatR 12.5.0. See README for migration guide.</PackageReleaseNotes>
+    <Version>1.0.2</Version>
+    <PackageReleaseNotes>Initial release of MediateX - Modern .NET 9 mediator implementation based on MediatR 12.5.0. See README for migration guide. v1.0.2: Updated package metadata and README with author information and project goals.</PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>gradient_128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>

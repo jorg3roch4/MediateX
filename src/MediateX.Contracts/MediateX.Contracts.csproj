@@ -2,27 +2,27 @@
 
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Authors>JR</Authors>
+    <Authors>jorg3roch4</Authors>
     <Description>Lightweight contracts-only package for MediateX mediator. Contains IRequest, INotification, IStreamRequest interfaces. Perfect for shared libraries and microservices.</Description>
     <Copyright>Copyright (c) 2025 JR. Based on MediatR by Jimmy Bogard.</Copyright>
     <TargetFramework>net9.0</TargetFramework>
     <Features>strict</Features>
     <PackageTags>mediator;request;response;queries;commands;notifications;mediatex;contracts;interfaces;net9</PackageTags>
-    <PackageProjectUrl>https://github.com/yourusername/MediateX</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/yourusername/MediateX</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/jorg3roch4/MediateX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\MediateX.snk</AssemblyOriginatorKeyFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>gradient_128x128.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageReleaseNotes>Initial release of MediateX.Contracts 1.0.0 - Lightweight contracts for .NET 9+.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial release of MediateX.Contracts - Lightweight contracts for .NET 9+. v1.0.2: Updated package metadata and README with author information and project goals.</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Deterministic>true</Deterministic>
-    <Version>1.0.0</Version>
+    <Version>1.0.2</Version>
     <RootNamespace>MediateX</RootNamespace>
   </PropertyGroup>
 
