@@ -1,34 +1,15 @@
-<!-- @formatter:off -->
-<div align="center">
-
-<img src="assets/MediateX.png" alt="MediateX Logo" width="400"/>
-
 # MediateX
+
 **The Modern Mediator Pattern for .NET 9+**
 
 [![NuGet](https://img.shields.io/nuget/v/MediateX.svg?style=flat-square)](https://www.nuget.org/packages/MediateX)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
-
-</div>
-<!-- @formatter:on -->
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](https://github.com/jorg3roch4/MediateX/blob/main/LICENSE)
 
 **MediateX** is a bold reimagining of the mediator pattern, crafted exclusively for the modern .NET ecosystem. Born from the solid foundation of MediatR, MediateX takes a deliberate step forward, shedding the weight of backward compatibility to fully embrace the power and performance of **.NET 9 and beyond**.
 
 Version 2.0.0 marks a pivotal moment: a complete architectural overhaul to unify the project into a single, streamlined package. This enhances performance, simplifies dependency management, and paves the way for rapid, forward-focused development.
 
 Our philosophy is simple: always leverage the best of what the .NET platform offers. MediateX is built with the latest **C# 13** features, and our roadmap is already targeting **.NET 10 and C# 14 for Version 3.0**. This is not just another library; it's a commitment to staying on the cutting edge.
-
----
-
-## 💖 Support the Project
-
-MediateX is a passion project, driven by the desire to provide a truly modern tool for the .NET community. If you find this library valuable and believe in its forward-thinking philosophy, please consider supporting its development. Every contribution helps sustain the effort required to keep the project aligned with the rapid pace of .NET innovation.
-
-- ⭐ **Star the repository** on GitHub to raise its visibility.
-- ☕ **Support via Donations:**
-
-  - [![PayPal](https://img.shields.io/badge/PayPal-Donate-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/jorg3roch4)
-  - [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/jorg3roch4)
 
 ---
 
@@ -78,10 +59,21 @@ var product = await mediator.Send(new GetProductQuery(42));
 
 ## 📚 Documentation
 
-For more detailed guides, advanced use cases, and examples, please refer to the documentation.
+For more detailed guides, advanced use cases, and examples, please visit the [GitHub repository](https://github.com/jorg3roch4/MediateX).
 
-- **[Quick Start Guide](./docs/quick-start.md)**
-- **[Examples](./docs/examples)**
+- **[Quick Start Guide](https://github.com/jorg3roch4/MediateX/blob/main/docs/quick-start.md)**
+- **[Examples](https://github.com/jorg3roch4/MediateX/tree/main/docs/examples)**
+
+---
+
+## 💖 Support the Project
+
+MediateX is a passion project, driven by the desire to provide a truly modern tool for the .NET community. If you find this library valuable and believe in its forward-thinking philosophy, please consider supporting its development.
+
+- ⭐ **[Star the repository on GitHub](https://github.com/jorg3roch4/MediateX)** to raise its visibility
+- ☕ **Support via Donations:**
+  - [PayPal](https://paypal.me/jorg3roch4)
+  - [Ko-fi](https://ko-fi.com/jorg3roch4)
 
 ---
 

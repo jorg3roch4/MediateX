@@ -28,7 +28,7 @@ namespace MediateX.Tests.Handlers
 
             var dynamicAssembly = GenerateCombinationsTestAssembly(numberOfClasses, numberOfInterfaces, numberOfTypeParameters);
 
-            services.AddMediatR(cfg =>
+            services.AddMediateX(cfg =>
             {
                 cfg.RegisterServicesFromAssemblies(dynamicAssembly);
                 cfg.RegisterGenericHandlers = true;
@@ -103,7 +103,7 @@ namespace MediateX.Tests.Handlers
 
             Should.Throw<ArgumentException>(() =>
             {
-                services.AddMediatR(cfg =>
+                services.AddMediateX(cfg =>
                 {
                     cfg.RegisterServicesFromAssembly(assembly);
                     cfg.RegisterGenericHandlers = true;
@@ -122,7 +122,7 @@ namespace MediateX.Tests.Handlers
 
             Should.Throw<ArgumentException>(() =>
             {
-                services.AddMediatR(cfg =>
+                services.AddMediateX(cfg =>
                 {
                     cfg.RegisterServicesFromAssembly(assembly);
                     cfg.RegisterGenericHandlers = true;
@@ -141,7 +141,7 @@ namespace MediateX.Tests.Handlers
 
             Should.Throw<ArgumentException>(() =>
             {
-                services.AddMediatR(cfg =>
+                services.AddMediateX(cfg =>
                 {
                     cfg.RegisterServicesFromAssembly(assembly);
                     cfg.RegisterGenericHandlers = true;
@@ -160,7 +160,7 @@ namespace MediateX.Tests.Handlers
 
             Should.Throw<TimeoutException>(() =>
             {
-                services.AddMediatR(cfg =>
+                services.AddMediateX(cfg =>
                 {
                     cfg.MaxGenericTypeParameters = 0;
                     cfg.MaxGenericTypeRegistrations = 0;
@@ -180,7 +180,7 @@ namespace MediateX.Tests.Handlers
             services.AddSingleton(new Logger());
 
             var assembly = GenerateOptOutAssembly();
-            services.AddMediatR(cfg =>
+            services.AddMediateX(cfg =>
             {
                 //opt out flag set
                 cfg.RegisterGenericHandlers = false;

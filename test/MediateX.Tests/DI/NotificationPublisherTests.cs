@@ -33,7 +33,7 @@ public class NotificationPublisherTests
     {
         var services = new ServiceCollection();
         services.AddSingleton(new Logger());
-        services.AddMediatR(cfg =>
+        services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(CustomMediatorTests));
         });
@@ -54,7 +54,7 @@ public class NotificationPublisherTests
         var publisher = new MockPublisher();
         var services = new ServiceCollection();
         services.AddSingleton(new Logger());
-        services.AddMediatR(cfg =>
+        services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(CustomMediatorTests));
             cfg.NotificationPublisher = publisher;
@@ -75,7 +75,7 @@ public class NotificationPublisherTests
     {
         var services = new ServiceCollection();
         services.AddSingleton(new Logger());
-        services.AddMediatR(cfg =>
+        services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(CustomMediatorTests));
             cfg.NotificationPublisherType = typeof(MockPublisher);
@@ -101,7 +101,7 @@ public class NotificationPublisherTests
     {
         var services = new ServiceCollection();
         services.AddSingleton(new Logger());
-        services.AddMediatR(cfg =>
+        services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(CustomMediatorTests));
             cfg.NotificationPublisherType = typeof(TaskWhenAllPublisher);

@@ -21,7 +21,7 @@ using MediateX;
 var mediator = serviceProvider.GetRequiredService<IMediator>();
 
 // Or configure explicitly
-services.AddMediatR(cfg =>
+services.AddMediateX(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
     cfg.NotificationPublisher = new ForeachAwaitPublisher();
@@ -49,7 +49,7 @@ Executes all handlers **in parallel** using `Task.WhenAll`.
 ```csharp
 using MediateX;
 
-services.AddMediatR(cfg =>
+services.AddMediateX(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
     cfg.NotificationPublisher = new TaskWhenAllPublisher();
@@ -204,7 +204,7 @@ public class StopOnExceptionPublisher : INotificationPublisher
 Set the publisher for all notifications:
 
 ```csharp
-services.AddMediatR(cfg =>
+services.AddMediateX(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
     cfg.NotificationPublisher = new TaskWhenAllPublisher();
@@ -224,7 +224,7 @@ public class CustomMediator : Mediator
     }
 }
 
-services.AddMediatR(cfg =>
+services.AddMediateX(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
     cfg.MediatorImplementationType = typeof(CustomMediator);

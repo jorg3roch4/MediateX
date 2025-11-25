@@ -12,8 +12,8 @@
     <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
-    <Version>2.0.0</Version>
-    <PackageReleaseNotes>v2.0.0 - Major restructuring: Integrated MediateX.Contracts into main package, reorganized namespaces (MediateX.Contracts, MediateX.Core, MediateX.Handlers, MediateX.Pipeline, MediateX.Publishing). Breaking change: Update namespace imports. See README for migration guide.</PackageReleaseNotes>
+    <Version>2.0.2</Version>
+    <PackageReleaseNotes>v2.0.2 - Rebranding: Renamed AddMediatR to AddMediateX throughout entire codebase. Breaking change: Update registration calls. v2.0.1 - Fixed NuGet README display. v2.0.0 - Major restructuring: Integrated MediateX.Contracts into main package.</PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon_128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.nuget.md" Pack="true" PackagePath="\README.md" />
   </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// - Scans for any handler interface implementations and registers them as <see cref="ServiceLifetime.Transient"/>
 /// - Scans for any <see cref="IRequestPreProcessor{TRequest}"/> and <see cref="IRequestPostProcessor{TRequest,TResponse}"/> implementations and registers them as transient instances
 /// Registers <see cref="IMediator"/> as a transient instance
-/// After calling AddMediatR you can use the container to resolve an <see cref="IMediator"/> instance.
+/// After calling AddMediateX you can use the container to resolve an <see cref="IMediator"/> instance.
 /// This does not scan for any <see cref="IPipelineBehavior{TRequest,TResponse}"/> instances including <see cref="RequestPreProcessorBehavior{TRequest,TResponse}"/> and <see cref="RequestPreProcessorBehavior{TRequest,TResponse}"/>.
 /// To register behaviors, use the <see cref="ServiceCollectionServiceExtensions.AddTransient(IServiceCollection,Type,Type)"/> with the open generic or closed generic types.
 /// </summary>
@@ -24,23 +24,23 @@ public static class ServiceCollectionExtensions
     /// <param name="services">Service collection</param>
     /// <param name="configuration">The action used to configure the options</param>
     /// <returns>Service collection</returns>
-    public static IServiceCollection AddMediatR(this IServiceCollection services,
+    public static IServiceCollection AddMediateX(this IServiceCollection services,
         Action<MediateXServiceConfiguration> configuration)
     {
         var serviceConfig = new MediateXServiceConfiguration();
 
         configuration.Invoke(serviceConfig);
 
-        return services.AddMediatR(serviceConfig);
+        return services.AddMediateX(serviceConfig);
     }
-    
+
     /// <summary>
     /// Registers handlers and mediator types from the specified assemblies
     /// </summary>
     /// <param name="services">Service collection</param>
     /// <param name="configuration">Configuration options</param>
     /// <returns>Service collection</returns>
-    public static IServiceCollection AddMediatR(this IServiceCollection services,
+    public static IServiceCollection AddMediateX(this IServiceCollection services,
         MediateXServiceConfiguration configuration)
     {
         if (!configuration.AssembliesToRegister.Any())
@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
 
         ServiceRegistrar.SetGenericRequestHandlerRegistrationLimitations(configuration);
 
-        ServiceRegistrar.AddMediatRClassesWithTimeout(services, configuration);
+        ServiceRegistrar.AddMediateXClassesWithTimeout(services, configuration);
 
         ServiceRegistrar.AddRequiredServices(services, configuration);
 

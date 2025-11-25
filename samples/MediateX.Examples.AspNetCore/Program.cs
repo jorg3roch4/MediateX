@@ -24,7 +24,7 @@ public static class Program
 
         services.AddSingleton<TextWriter>(writer);
 
-        services.AddMediatR(cfg =>
+        services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(typeof(Ping).Assembly, typeof(Sing).Assembly);
         });

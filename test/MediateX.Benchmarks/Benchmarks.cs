@@ -20,7 +20,7 @@ namespace MediateX.Benchmarks
 
             services.AddSingleton(TextWriter.Null);
 
-            services.AddMediatR(cfg =>
+            services.AddMediateX(cfg =>
             {
                 cfg.RegisterServicesFromAssemblyContaining(typeof(Ping));
                 cfg.AddOpenBehavior(typeof(GenericPipelineBehavior<,>));

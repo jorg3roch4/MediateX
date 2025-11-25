@@ -11,7 +11,7 @@ MediateX works with various popular DI containers. Below are examples for differ
 The default and recommended DI container for .NET applications.
 
 ```csharp
-services.AddMediatR(cfg =>
+services.AddMediateX(cfg =>
     cfg.RegisterServicesFromAssemblyContaining<Program>()
 );
 ```

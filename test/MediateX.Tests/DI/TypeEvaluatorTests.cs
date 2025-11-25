@@ -20,7 +20,7 @@ public class TypeEvaluatorTests
     {
         _services = new ServiceCollection();
         _services.AddSingleton(new Logger());
-        _services.AddMediatR(cfg =>
+        _services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(Ping));
             cfg.TypeEvaluator = t => t.Namespace == "MediateX.Tests.DI.Included";

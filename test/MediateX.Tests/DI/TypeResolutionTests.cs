@@ -18,7 +18,7 @@ public class TypeResolutionTests
     {
         IServiceCollection services = new ServiceCollection();
         services.AddSingleton(new Logger());
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(Ping)));
+        services.AddMediateX(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(Ping)));
         _provider = services.BuildServiceProvider();
     }
 
@@ -84,7 +84,7 @@ public class TypeResolutionTests
         IServiceCollection services = new ServiceCollection();
         services.AddSingleton(new Logger());
         services.AddKeyedSingleton<string>("Foo", "Foo");
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(Ping)));
+        services.AddMediateX(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(Ping)));
         var serviceProvider = services.BuildServiceProvider();
 
         var mediator = serviceProvider.GetRequiredService<IMediator>();

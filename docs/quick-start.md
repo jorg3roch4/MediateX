@@ -26,7 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register MediateX and scan for handlers
-builder.Services.AddMediatR(cfg =>
+builder.Services.AddMediateX(cfg =>
     cfg.RegisterServicesFromAssemblyContaining<Program>()
 );
 

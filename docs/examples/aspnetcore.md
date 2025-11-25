@@ -29,7 +29,7 @@ using Microsoft.Extensions.DependencyInjection;
 var services = new ServiceCollection();
 
 // Register MediateX and scan assemblies for handlers
-services.AddMediatR(cfg =>
+services.AddMediateX(cfg =>
 {
     cfg.RegisterServicesFromAssemblies(
         typeof(Ping).Assembly,

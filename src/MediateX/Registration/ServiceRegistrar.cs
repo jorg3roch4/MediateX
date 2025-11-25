@@ -26,13 +26,13 @@ public static class ServiceRegistrar
         RegistrationTimeout = configuration.RegistrationTimeout;
     }
 
-    public static void AddMediatRClassesWithTimeout(IServiceCollection services, MediateXServiceConfiguration configuration)
+    public static void AddMediateXClassesWithTimeout(IServiceCollection services, MediateXServiceConfiguration configuration)
     {
         using(var cts = new CancellationTokenSource(RegistrationTimeout))
         {
             try
             {
-                AddMediatRClasses(services, configuration, cts.Token);
+                AddMediateXClasses(services, configuration, cts.Token);
             }
             catch (OperationCanceledException)
             {
@@ -41,7 +41,7 @@ public static class ServiceRegistrar
         }
     }
 
-    public static void AddMediatRClasses(IServiceCollection services, MediateXServiceConfiguration configuration, CancellationToken cancellationToken = default)
+    public static void AddMediateXClasses(IServiceCollection services, MediateXServiceConfiguration configuration, CancellationToken cancellationToken = default)
     {   
 
         var assembliesToScan = configuration.AssembliesToRegister.Distinct().ToArray();
