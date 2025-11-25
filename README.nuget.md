@@ -57,12 +57,28 @@ var product = await mediator.Send(new GetProductQuery(42));
 
 ---
 
+## ✨ Features
+
+- **Request/Response** - Commands and queries with single handler
+- **Notifications & Events** - Publish to multiple handlers
+- **Streaming** - Async stream responses with `IAsyncEnumerable<T>`
+- **Pipeline Behaviors** - Add logging, validation, caching, etc.
+- **Exception Handling** - Sophisticated error handling with fallback responses
+- **Publishing Strategies** - Sequential or parallel notification execution
+
+---
+
 ## 📚 Documentation
 
-For more detailed guides, advanced use cases, and examples, please visit the [GitHub repository](https://github.com/jorg3roch4/MediateX).
+Comprehensive guides available on [GitHub](https://github.com/jorg3roch4/MediateX/tree/main/docs):
 
-- **[Quick Start Guide](https://github.com/jorg3roch4/MediateX/blob/main/docs/quick-start.md)**
-- **[Examples](https://github.com/jorg3roch4/MediateX/tree/main/docs/examples)**
+- **[Getting Started](https://github.com/jorg3roch4/MediateX/blob/main/docs/01-getting-started.md)** - Installation and basic setup
+- **[Requests & Handlers](https://github.com/jorg3roch4/MediateX/blob/main/docs/02-requests-handlers.md)** - Deep dive into requests and handlers
+- **[Notifications & Events](https://github.com/jorg3roch4/MediateX/blob/main/docs/03-notifications.md)** - Pub/sub pattern and events
+- **[Pipeline Behaviors](https://github.com/jorg3roch4/MediateX/blob/main/docs/04-behaviors.md)** - Cross-cutting concerns
+- **[Configuration](https://github.com/jorg3roch4/MediateX/blob/main/docs/05-configuration.md)** - Complete configuration reference
+- **[Exception Handling](https://github.com/jorg3roch4/MediateX/blob/main/docs/06-exception-handling.md)** - Advanced error handling
+- **[Streaming](https://github.com/jorg3roch4/MediateX/blob/main/docs/07-streaming.md)** - Working with async streams
 
 ---
 

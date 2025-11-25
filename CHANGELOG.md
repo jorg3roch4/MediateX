@@ -6,6 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [Unreleased]
+
+### 📚 Documentation
+
+*   **Complete Documentation Overhaul:** Restructured entire documentation with 7 comprehensive guides covering all features, patterns, and best practices (127 KB total)
+    *   Added structured documentation: Getting Started, Requests & Handlers, Notifications, Behaviors, Configuration, Exception Handling, and Streaming
+    *   Removed old scattered documentation files and `docs/examples/` folder
+    *   Created `docs/README.md` with complete navigation and learning paths
+    *   Updated main README with clear feature highlights and documentation links
+    *   All 40+ MediateX features now fully documented with code examples and best practices
+
+---
+
+## [2.0.2] - 2025-11-24
+
+### 🔄 Changed
+
+*   **Rebranding:** Renamed `AddMediatR` to `AddMediateX` throughout entire codebase for consistency with project name
+
+### ⚠️ Breaking Changes
+
+*   **Service Registration:** Must update registration calls from `services.AddMediatR(...)` to `services.AddMediateX(...)`
+
+---
+
+## [2.0.1] - 2025-11-24
+
+### 🐛 Fixed
+
+*   **NuGet Package Display:** Fixed README display in NuGet package manager by correctly referencing `README.nuget.md`
+
+---
+
 ## [2.0.0] - 2025-11-24
 
 This release marks a significant strategic shift for MediateX, focusing entirely on modern .NET, project simplification, and a clear vision for the future.

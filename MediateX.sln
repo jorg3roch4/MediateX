@@ -43,6 +43,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediateX.Examples.SimpleInj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediateX.Examples.Stashbox", "samples\MediateX.Examples.Stashbox\MediateX.Examples.Stashbox.csproj", "{F9148E20-5856-484C-8410-B515C6C56214}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\01-getting-started.md = docs\01-getting-started.md
+		docs\02-requests-handlers.md = docs\02-requests-handlers.md
+		docs\03-notifications.md = docs\03-notifications.md
+		docs\04-behaviors.md = docs\04-behaviors.md
+		docs\05-configuration.md = docs\05-configuration.md
+		docs\06-exception-handling.md = docs\06-exception-handling.md
+		docs\07-streaming.md = docs\07-streaming.md
+		docs\features.md = docs\features.md
+		docs\README.md = docs\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

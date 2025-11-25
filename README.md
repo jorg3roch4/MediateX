@@ -76,12 +76,50 @@ var product = await mediator.Send(new GetProductQuery(42));
 
 ---
 
+## ✨ Features
+
+MediateX provides a comprehensive suite of features for implementing clean, maintainable mediator patterns:
+
+### Core Capabilities
+- **Request/Response** - Commands and queries with single handler (`IRequest<TResponse>`)
+- **Notifications & Events** - Publish to multiple handlers (`INotification`)
+- **Streaming** - Async stream responses with `IAsyncEnumerable<T>` (`IStreamRequest<TResponse>`)
+- **Separated Interfaces** - Use `ISender`, `IPublisher`, or `IMediator` based on your needs
+
+### Pipeline Features
+- **Behaviors** - Add cross-cutting concerns (logging, validation, caching, etc.)
+- **Pre/Post Processors** - Execute logic before and after handlers
+- **Exception Handling** - Sophisticated error handling with fallback responses
+- **Stream Behaviors** - Wrap and transform async streams
+
+### Advanced Features
+- **Publishing Strategies** - Sequential or parallel notification execution
+- **Generic Variance** - Leverage C# covariance/contravariance
+- **Dynamic Dispatch** - Runtime type resolution for flexibility
+- **Handler Prioritization** - Automatic ordering based on assembly/namespace
+- **Open Generic Support** - Register generic handlers with constraints
+
+---
+
 ## 📚 Documentation
 
-For more detailed guides, advanced use cases, and examples, please refer to the documentation.
+Comprehensive guides to help you master MediateX:
 
-- **[Quick Start Guide](./docs/quick-start.md)**
-- **[Examples](./docs/examples)**
+### Getting Started
+- **[01. Getting Started](./docs/01-getting-started.md)** - Installation, basic setup, and first request
+- **[02. Requests & Handlers](./docs/02-requests-handlers.md)** - Deep dive into requests, handlers, and best practices
+
+### Core Features
+- **[03. Notifications & Events](./docs/03-notifications.md)** - Pub/sub pattern, publishing strategies, event handling
+- **[04. Pipeline Behaviors](./docs/04-behaviors.md)** - Cross-cutting concerns, behavior chaining, examples
+- **[05. Configuration](./docs/05-configuration.md)** - Complete configuration reference and options
+
+### Advanced Topics
+- **[06. Exception Handling](./docs/06-exception-handling.md)** - Exception handlers, actions, and strategies
+- **[07. Streaming](./docs/07-streaming.md)** - Working with `IAsyncEnumerable<T>` and stream behaviors
+
+### Examples
+Check out the **[samples folder](./samples/)** for complete working examples with different DI containers and scenarios.
 
 ---
 
