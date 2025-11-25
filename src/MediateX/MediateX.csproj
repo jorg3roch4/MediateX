@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Authors>jorg3roch4</Authors>
+    <Description>Modern mediator implementation for .NET 9+ with in-process messaging. Supports request/response, CQRS, notifications, and events. Based on MediatR 12.5.0.</Description>
+    <Copyright>Copyright (c) 2025 JR. Based on MediatR by Jimmy Bogard.</Copyright>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Features>strict</Features>
+    <PackageTags>mediator;request;response;queries;commands;notifications;mediatex;cqrs;events;messaging;pipeline;net9</PackageTags>
+    <PackageProjectUrl>https://github.com/jorg3roch4/MediateX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <Version>2.0.0</Version>
+    <PackageReleaseNotes>v2.0.0 - Major restructuring: Integrated MediateX.Contracts into main package, reorganized namespaces (MediateX.Contracts, MediateX.Core, MediateX.Handlers, MediateX.Pipeline, MediateX.Publishing). Breaking change: Update namespace imports. See README for migration guide.</PackageReleaseNotes>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon_128x128.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\assets\icon_128x128.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
