@@ -32,7 +32,7 @@ public class RequestExceptionProcessorBehavior<TRequest, TResponse> : IPipelineB
         }
         catch (Exception exception)
         {
-            var state = new RequestExceptionHandlerState<TResponse>();
+            RequestExceptionHandlerState<TResponse> state = new();
 
             var exceptionTypes = GetExceptionTypes(exception.GetType());
 

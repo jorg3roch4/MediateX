@@ -34,7 +34,7 @@ public class NotificationPublisherTests
     [Fact]
     public async Task Should_handle_sequentially_by_default()
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining<Notification>();

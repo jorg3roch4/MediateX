@@ -14,7 +14,7 @@ public class DerivingRequestsTests
 
     public DerivingRequestsTests()
     {
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(Ping)));
         _provider = services.BuildServiceProvider();

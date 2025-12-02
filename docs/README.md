@@ -112,9 +112,12 @@ Welcome to the MediateX documentation! This guide will help you master the moder
 
 All documentation follows these standards:
 
-- **Code Examples**: All examples use C# 13 with .NET 9+ features
+- **Code Examples**: All examples use modern C# 9-13 features with .NET 9+
+  - Collection expressions (`[]` syntax)
+  - Target-typed new expressions
+  - Pattern matching
+  - Records for requests
 - **Async/Await**: Proper async patterns with `CancellationToken` support
-- **Records**: Using C# records for requests
 - **Best Practices**: Each guide includes best practices section
 - **Examples**: Real-world, practical examples
 - **Cross-References**: Links to related documentation
@@ -144,10 +147,10 @@ For complete working examples, see the **[samples folder](../samples/)** which i
 
 ## 🔗 External Resources
 
-- **[GitHub Repository](https://github.com/LuckyPennySoftware/MediateX)**
+- **[GitHub Repository](https://github.com/jorg3roch4/MediateX)**
 - **[NuGet Package](https://www.nuget.org/packages/MediateX)**
 - **[Samples](../samples/)**
-- **[Issue Tracker](https://github.com/LuckyPennySoftware/MediateX/issues)**
+- **[Issue Tracker](https://github.com/jorg3roch4/MediateX/issues)**
 
 ---
 

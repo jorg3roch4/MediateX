@@ -14,7 +14,7 @@ public class DuplicateAssemblyResolutionTests
 
     public DuplicateAssemblyResolutionTests()
     {
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg => cfg.RegisterServicesFromAssemblies(typeof(Ping).Assembly, typeof(Ping).Assembly));
         _provider = services.BuildServiceProvider();

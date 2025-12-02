@@ -28,20 +28,12 @@ internal class ObjectDetails : IComparer<ObjectDetails>
         Location = exceptionHandlerType.Namespace?.Replace($"{AssemblyName}.", string.Empty);
     }
 
-    public int Compare(ObjectDetails? x, ObjectDetails? y)
+    public int Compare(ObjectDetails? x, ObjectDetails? y) => (x, y) switch
     {
-        if (x == null)
-        {
-            return 1;
-        }
-
-        if (y == null)
-        {
-            return -1;
-        }
-
-        return CompareByAssembly(x, y) ?? CompareByNamespace(x, y) ?? CompareByLocation(x, y);
-    }
+        (null, _) => 1,
+        (_, null) => -1,
+        _ => CompareByAssembly(x, y) ?? CompareByNamespace(x, y) ?? CompareByLocation(x, y)
+    };
 
     /// <summary>
     /// Compare two objects according to current assembly
@@ -53,24 +45,14 @@ internal class ObjectDetails : IComparer<ObjectDetails>
     /// If none of the objects belong to the current assembly, they can be considered equal;
     /// If both objects belong to the current assembly, they can't be compared only by this criterion.
     /// </returns>
-    private int? CompareByAssembly(ObjectDetails x, ObjectDetails y)
-    {
-        if (x.AssemblyName == AssemblyName && y.AssemblyName != AssemblyName)
+    private int? CompareByAssembly(ObjectDetails x, ObjectDetails y) =>
+        (x.AssemblyName == AssemblyName, y.AssemblyName == AssemblyName) switch
         {
-            return -1;
-        }
-
-        if (x.AssemblyName != AssemblyName && y.AssemblyName == AssemblyName)
-        {
-            return 1;
-        }
-        if (x.AssemblyName != AssemblyName && y.AssemblyName != AssemblyName)
-        {
-            return 0;
-        }
-
-        return null;
-    }
+            (true, false) => -1,
+            (false, true) => 1,
+            (false, false) => 0,
+            _ => null
+        };
 
     /// <summary>
     /// Compare two objects according to current namespace
@@ -85,25 +67,16 @@ internal class ObjectDetails : IComparer<ObjectDetails>
     private int? CompareByNamespace(ObjectDetails x, ObjectDetails y)
     {
         if (Location is null || x.Location is null || y.Location is null)
-        {
             return 0;
-        }
 
-        if (x.Location.StartsWith(Location, StringComparison.Ordinal) && !y.Location.StartsWith(Location, StringComparison.Ordinal))
+        return (x.Location.StartsWith(Location, StringComparison.Ordinal),
+                y.Location.StartsWith(Location, StringComparison.Ordinal)) switch
         {
-            return -1;
-        }
-
-        if (!x.Location.StartsWith(Location, StringComparison.Ordinal) && y.Location.StartsWith(Location, StringComparison.Ordinal))
-        {
-            return 1;
-        }
-        if (x.Location.StartsWith(Location, StringComparison.Ordinal) && y.Location.StartsWith(Location, StringComparison.Ordinal))
-        {
-            return 0;
-        }
-
-        return null;
+            (true, false) => -1,
+            (false, true) => 1,
+            (true, true) => 0,
+            _ => null
+        };
     }
 
     /// <summary>
@@ -119,27 +92,17 @@ internal class ObjectDetails : IComparer<ObjectDetails>
     private int CompareByLocation(ObjectDetails x, ObjectDetails y)
     {
         if (Location is null || x.Location is null || y.Location is null)
-        {
             return 0;
-        }
 
-        if (Location.StartsWith(x.Location, StringComparison.Ordinal) && !Location.StartsWith(y.Location, StringComparison.Ordinal))
+        return (Location.StartsWith(x.Location, StringComparison.Ordinal),
+                Location.StartsWith(y.Location, StringComparison.Ordinal),
+                x.Location.Length.CompareTo(y.Location.Length)) switch
         {
-            return -1;
-        }
-
-        if (!Location.StartsWith(x.Location, StringComparison.Ordinal) && Location.StartsWith(y.Location, StringComparison.Ordinal))
-        {
-            return 1;
-        }
-        if (x.Location.Length > y.Location.Length)
-        {
-            return -1;
-        }
-        if (x.Location.Length < y.Location.Length)
-        {
-            return 1;
-        }
-        return 0;
+            (true, false, _) => -1,
+            (false, true, _) => 1,
+            (_, _, < 0) => 1,
+            (_, _, > 0) => -1,
+            _ => 0
+        };
     }
 }

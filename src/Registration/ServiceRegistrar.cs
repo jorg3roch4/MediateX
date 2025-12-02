@@ -28,7 +28,7 @@ public static class ServiceRegistrar
 
     public static void AddMediateXClassesWithTimeout(IServiceCollection services, MediateXServiceConfiguration configuration)
     {
-        using(var cts = new CancellationTokenSource(RegistrationTimeout))
+        using(CancellationTokenSource cts = new(RegistrationTimeout))
         {
             try
             {
@@ -59,12 +59,12 @@ public static class ServiceRegistrar
             ConnectImplementationsToTypesClosing(typeof(IRequestPostProcessor<,>), services, assembliesToScan, true, configuration);
         }
 
-        var multiOpenInterfaces = new List<Type>
-        {
+        List<Type> multiOpenInterfaces =
+        [
             typeof(INotificationHandler<>),
             typeof(IRequestExceptionHandler<,,>),
             typeof(IRequestExceptionAction<,>)
-        };
+        ];
 
         if (configuration.AutoRegisterRequestProcessors)
         {
@@ -98,10 +98,10 @@ public static class ServiceRegistrar
         MediateXServiceConfiguration configuration,
         CancellationToken cancellationToken = default)
     {
-        var concretions = new List<Type>();
-        var interfaces = new List<Type>();
-        var genericConcretions = new List<Type>();
-        var genericInterfaces = new List<Type>();
+        List<Type> concretions = [];
+        List<Type> interfaces = [];
+        List<Type> genericConcretions = [];
+        List<Type> genericInterfaces = [];
 
         var types = assembliesToScan
             .SelectMany(a => a.DefinedTypes)
@@ -169,27 +169,13 @@ public static class ServiceRegistrar
         }
     }
 
-    private static bool IsMatchingWithInterface(Type? handlerType, Type handlerInterface)
-    {
-        if (handlerType == null || handlerInterface == null)
+    private static bool IsMatchingWithInterface(Type? handlerType, Type handlerInterface) =>
+        (handlerType, handlerInterface) switch
         {
-            return false;
-        }
-
-        if (handlerType.IsInterface)
-        {
-            if (handlerType.GenericTypeArguments.SequenceEqual(handlerInterface.GenericTypeArguments))
-            {
-                return true;
-            }
-        }
-        else
-        {
-            return IsMatchingWithInterface(handlerType.GetInterface(handlerInterface.Name), handlerInterface);
-        }
-
-        return false;
-    }
+            (null, _) or (_, null) => false,
+            _ when handlerType.IsInterface => handlerType.GenericTypeArguments.SequenceEqual(handlerInterface.GenericTypeArguments),
+            _ => IsMatchingWithInterface(handlerType.GetInterface(handlerInterface.Name), handlerInterface)
+        };
 
     private static void AddConcretionsThatCouldBeClosed(Type @interface, List<Type> concretions, IServiceCollection services)
     {
@@ -276,20 +262,19 @@ public static class ServiceRegistrar
         }
 
         if (depth >= lists.Count)
-            return new List<List<Type>> { new List<Type>() };
+            return [[]];
        
         cancellationToken.ThrowIfCancellationRequested();
 
         var currentList = lists[depth];
         var childCombinations = GenerateCombinations(requestType, lists, depth + 1, cancellationToken);
-        var combinations = new List<List<Type>>();
+        List<List<Type>> combinations = [];
 
         foreach (var item in currentList)
         {
             foreach (var childCombination in childCombinations)
             {
-                var currentCombination = new List<Type> { item };
-                currentCombination.AddRange(childCombination);
+                List<Type> currentCombination = [item, .. childCombination];
                 combinations.Add(currentCombination);
             }
         }
@@ -326,14 +311,13 @@ public static class ServiceRegistrar
         return arguments.Length == concreteArguments.Length && openConcretion.CanBeCastTo(openInterface);
     }
 
-    private static bool CanBeCastTo(this Type pluggedType, Type pluginType)
-    {
-        if (pluggedType == null) return false;
-
-        if (pluggedType == pluginType) return true;
-
-        return pluginType.IsAssignableFrom(pluggedType);
-    }
+    private static bool CanBeCastTo(this Type pluggedType, Type pluginType) =>
+        pluggedType switch
+        {
+            null => false,
+            _ when pluggedType == pluginType => true,
+            _ => pluginType.IsAssignableFrom(pluggedType)
+        };
 
     private static bool IsOpenGeneric(this Type type)
     {

@@ -9,7 +9,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         services.AddSingleton<Publisher>();
 
@@ -22,7 +22,7 @@ class Program
 
         var publisher = provider.GetRequiredService<Publisher>();
 
-        var pinged = new Pinged();
+        Pinged pinged = new();
 
         foreach (PublishStrategy strategy in Enum.GetValues(typeof(PublishStrategy)))
         {

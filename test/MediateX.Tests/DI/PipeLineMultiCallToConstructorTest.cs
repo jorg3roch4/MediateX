@@ -78,7 +78,7 @@ public class PipelineMultiCallToConstructorTests
         ConstructorTestHandler.ConstructorCallCount.ShouldBe(0);
 
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
 
         services.AddSingleton(output);
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ConstructorTestBehavior<,>));

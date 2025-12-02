@@ -24,7 +24,7 @@ namespace MediateX.Tests.Handlers
         [InlineData(50, 3, 3)]
         public void ShouldResolveAllCombinationsOfGenericHandler(int numberOfClasses, int numberOfInterfaces, int numberOfTypeParameters)
         {
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
 
             var dynamicAssembly = GenerateCombinationsTestAssembly(numberOfClasses, numberOfInterfaces, numberOfTypeParameters);
 
@@ -96,7 +96,7 @@ namespace MediateX.Tests.Handlers
         [Fact]
         public void ShouldThrowExceptionWhenTypesClosingExceedsMaximum()
         {
-            IServiceCollection services = new ServiceCollection();
+            ServiceCollection services = new();
             services.AddSingleton(new Logger());
 
             var assembly = GenerateTypesClosingExceedsMaximumAssembly();
@@ -115,7 +115,7 @@ namespace MediateX.Tests.Handlers
         [Fact]
         public void ShouldThrowExceptionWhenGenericHandlerRegistrationsExceedsMaximum()
         {
-            IServiceCollection services = new ServiceCollection();
+            ServiceCollection services = new();
             services.AddSingleton(new Logger());
 
             var assembly = GenerateHandlerRegistrationsExceedsMaximumAssembly();
@@ -134,7 +134,7 @@ namespace MediateX.Tests.Handlers
         [Fact]
         public void ShouldThrowExceptionWhenGenericTypeParametersExceedsMaximum()
         {
-            IServiceCollection services = new ServiceCollection();
+            ServiceCollection services = new();
             services.AddSingleton(new Logger());
 
             var assembly = GenerateGenericTypeParametersExceedsMaximumAssembly();
@@ -153,7 +153,7 @@ namespace MediateX.Tests.Handlers
         [Fact]
         public void ShouldThrowExceptionWhenTimeoutOccurs()
         {
-            IServiceCollection services = new ServiceCollection();
+            ServiceCollection services = new();
             services.AddSingleton(new Logger());
 
             var assembly = GenerateTimeoutOccursAssembly();
@@ -176,7 +176,7 @@ namespace MediateX.Tests.Handlers
         [Fact]
         public void ShouldNotRegisterGenericHandlersWhenOptingOut()
         {
-            IServiceCollection services = new ServiceCollection();
+            ServiceCollection services = new();
             services.AddSingleton(new Logger());
 
             var assembly = GenerateOptOutAssembly();

@@ -17,6 +17,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MediateX\MediateX.csproj" />
+    <ProjectReference Include="..\..\src\MediateX.csproj" />
   </ItemGroup>
 </Project>

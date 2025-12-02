@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MediateX\MediateX.csproj" />
+    <ProjectReference Include="..\..\src\MediateX.csproj" />
     <ProjectReference Include="..\MediateX.Examples\MediateX.Examples.csproj" />
   </ItemGroup>
 

@@ -401,7 +401,7 @@ public class PipelineTests
     public async Task Should_wrap_with_behavior()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg =>
         {
@@ -431,7 +431,7 @@ public class PipelineTests
     public async Task Should_wrap_generics_with_behavior()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg =>
         {
@@ -465,7 +465,7 @@ public class PipelineTests
     public async Task Should_register_pre_and_post_processors()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg =>
         {
@@ -505,7 +505,7 @@ public class PipelineTests
     public async Task Should_pick_up_specific_exception_behaviors()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg => cfg.RegisterServicesFromAssembly(typeof(Ping).Assembly));
         var provider = services.BuildServiceProvider();
@@ -522,7 +522,7 @@ public class PipelineTests
     public void Should_pick_up_base_exception_behaviors()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg => cfg.RegisterServicesFromAssembly(typeof(Ping).Assembly));
         var provider = services.BuildServiceProvider();
@@ -539,7 +539,7 @@ public class PipelineTests
     public void Should_handle_exceptions_from_behaviors()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg =>
         {
@@ -560,7 +560,7 @@ public class PipelineTests
     public void Should_pick_up_exception_actions()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg => cfg.RegisterServicesFromAssembly(typeof(Ping).Assembly));
         var provider = services.BuildServiceProvider();
@@ -577,7 +577,7 @@ public class PipelineTests
     public async Task Should_handle_constrained_generics()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg =>
         {
@@ -681,7 +681,7 @@ public class PipelineTests
         cfg.StreamBehaviorsToRegister[0].ImplementationInstance.ShouldBeNull();
         cfg.StreamBehaviorsToRegister[0].Lifetime.ShouldBe(ServiceLifetime.Transient);
 
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         cfg.RegisterServicesFromAssemblyContaining<Ping>();
 
@@ -712,7 +712,7 @@ public class PipelineTests
         cfg.BehaviorsToRegister[1].ImplementationInstance.ShouldBeNull();
         cfg.BehaviorsToRegister[1].Lifetime.ShouldBe(ServiceLifetime.Transient);
         
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         cfg.RegisterServicesFromAssemblyContaining<Ping>();
 
@@ -744,7 +744,7 @@ public class PipelineTests
         cfg.StreamBehaviorsToRegister[1].ImplementationInstance.ShouldBeNull();
         cfg.StreamBehaviorsToRegister[1].Lifetime.ShouldBe(ServiceLifetime.Transient);
         
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         cfg.RegisterServicesFromAssemblyContaining<Ping>();
 
@@ -775,7 +775,7 @@ public class PipelineTests
         cfg.RequestPreProcessorsToRegister[1].ImplementationInstance.ShouldBeNull();
         cfg.RequestPreProcessorsToRegister[1].Lifetime.ShouldBe(ServiceLifetime.Transient);
         
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         cfg.RegisterServicesFromAssemblyContaining<Ping>();
 
@@ -806,7 +806,7 @@ public class PipelineTests
         cfg.RequestPostProcessorsToRegister[1].ImplementationInstance.ShouldBeNull();
         cfg.RequestPostProcessorsToRegister[1].Lifetime.ShouldBe(ServiceLifetime.Transient);
         
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         cfg.RegisterServicesFromAssemblyContaining<Ping>();
 
@@ -839,7 +839,7 @@ public class PipelineTests
         cfg.StreamBehaviorsToRegister[0].ImplementationInstance.ShouldBeNull();
         cfg.StreamBehaviorsToRegister[0].Lifetime.ShouldBe(ServiceLifetime.Singleton);
         
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         cfg.RegisterServicesFromAssemblyContaining<Ping>();
 
@@ -859,7 +859,7 @@ public class PipelineTests
         };
 
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
 
         cfg.RegisterServicesFromAssemblyContaining<Ping>();
@@ -943,7 +943,7 @@ public class PipelineTests
     [Fact]
     public async Task Should_register_correctly()
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining<FooRequest>();
@@ -1029,13 +1029,13 @@ public class PipelineTests
     [Fact]
     public async Task Should_register_open_behaviors_correctly()
     {
-        var behaviorTypeList = new List<Type>
-        {
+        List<Type> behaviorTypeList =
+        [
             typeof(OpenBehaviorMultipleRegistration0<,>),
             typeof(OpenBehaviorMultipleRegistration1<,>),
             typeof(OpenBehaviorMultipleRegistration2<,>)
-        };
-        var services = new ServiceCollection();
+        ];
+        ServiceCollection services = new();
         services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining<FooRequest>();

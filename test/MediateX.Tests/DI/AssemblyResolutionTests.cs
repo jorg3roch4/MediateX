@@ -13,7 +13,7 @@ public class AssemblyResolutionTests
 
     public AssemblyResolutionTests()
     {
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg =>
         {
@@ -56,7 +56,7 @@ public class AssemblyResolutionTests
     [Fact]
     public void ShouldRequireAtLeastOneAssembly()
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         Action registration = () => services.AddMediateX(_ => { });
 

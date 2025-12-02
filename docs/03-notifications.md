@@ -325,7 +325,7 @@ public class ContinueOnExceptionPublisher : INotificationPublisher
         INotification notification,
         CancellationToken cancellationToken)
     {
-        var exceptions = new List<Exception>();
+        List<Exception> exceptions = [];
 
         foreach (var handler in handlerExecutors)
         {

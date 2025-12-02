@@ -14,7 +14,7 @@ public class CustomMediatorTests
 
     public CustomMediatorTests()
     {
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg =>
         {
@@ -46,7 +46,7 @@ public class CustomMediatorTests
     [Fact]
     public void Can_Call_AddMediatr_multiple_times()
     {
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg =>
         {

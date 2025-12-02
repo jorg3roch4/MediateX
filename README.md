@@ -1,20 +1,17 @@
-<!-- @formatter:off -->
-<div align="center">
-
-<img src="assets/MediateX.png" alt="MediateX Logo" width="400"/>
+![MediateX Logo](https://raw.githubusercontent.com/jorg3roch4/MediateX/main/assets/MediateX.png)
 
 # MediateX
+
 **The Modern Mediator Pattern for .NET 9+**
 
 [![NuGet](https://img.shields.io/nuget/v/MediateX.svg?style=flat-square)](https://www.nuget.org/packages/MediateX)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
-
-</div>
-<!-- @formatter:on -->
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](https://github.com/jorg3roch4/MediateX/blob/main/LICENSE)
+[![C#](https://img.shields.io/badge/C%23-13-239120.svg?style=flat-square)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4.svg?style=flat-square)](https://dotnet.microsoft.com/)
 
 **MediateX** is a bold reimagining of the mediator pattern, crafted exclusively for the modern .NET ecosystem. Born from the solid foundation of MediatR, MediateX takes a deliberate step forward, shedding the weight of backward compatibility to fully embrace the power and performance of **.NET 9 and beyond**.
 
-Version 2.0.0 marks a pivotal moment: a complete architectural overhaul to unify the project into a single, streamlined package. This enhances performance, simplifies dependency management, and paves the way for rapid, forward-focused development.
+Version 2.x marks a pivotal moment: a complete architectural overhaul to unify the project into a single, streamlined package. This enhances performance, simplifies dependency management, and paves the way for rapid, forward-focused development.
 
 Our philosophy is simple: always leverage the best of what the .NET platform offers. MediateX is built with the latest **C# 13** features, and our roadmap is already targeting **.NET 10 and C# 14 for Version 3.0**. This is not just another library; it's a commitment to staying on the cutting edge.
 
@@ -29,6 +26,21 @@ MediateX is a passion project, driven by the desire to provide a truly modern to
 
   - [![PayPal](https://img.shields.io/badge/PayPal-Donate-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/jorg3roch4)
   - [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/jorg3roch4)
+
+---
+
+## 🎉 What's New in 2.1.0
+
+**Full C# 9-13 Modernization!** MediateX 2.1.0 represents a complete code modernization effort:
+
+- ✨ **Collection Expressions (C# 12):** Clean, concise collection initialization with `[]` syntax
+- ✨ **Pattern Matching:** Advanced tuple patterns, relational patterns, and or patterns throughout
+- ✨ **Target-Typed New (C# 9):** Reduced verbosity in 50+ instantiations
+- ✨ **ArgumentNullException.ThrowIfNull (C# 11):** Modern parameter validation
+- 🚀 **Performance:** Optimized collection operations and pattern matching
+- 📉 **Reduced Code:** ~80 lines less code while improving readability
+
+[See the full changelog](CHANGELOG.md#210---2025-12-01) for details.
 
 ---
 
@@ -78,8 +90,6 @@ var product = await mediator.Send(new GetProductQuery(42));
 
 ## ✨ Features
 
-MediateX provides a comprehensive suite of features for implementing clean, maintainable mediator patterns:
-
 ### Core Capabilities
 - **Request/Response** - Commands and queries with single handler (`IRequest<TResponse>`)
 - **Notifications & Events** - Publish to multiple handlers (`INotification`)
@@ -106,20 +116,20 @@ MediateX provides a comprehensive suite of features for implementing clean, main
 Comprehensive guides to help you master MediateX:
 
 ### Getting Started
-- **[01. Getting Started](./docs/01-getting-started.md)** - Installation, basic setup, and first request
-- **[02. Requests & Handlers](./docs/02-requests-handlers.md)** - Deep dive into requests, handlers, and best practices
+- **[Getting Started](https://github.com/jorg3roch4/MediateX/blob/main/docs/01-getting-started.md)** - Installation, basic setup, and first request
+- **[Requests & Handlers](https://github.com/jorg3roch4/MediateX/blob/main/docs/02-requests-handlers.md)** - Deep dive into requests, handlers, and best practices
 
 ### Core Features
-- **[03. Notifications & Events](./docs/03-notifications.md)** - Pub/sub pattern, publishing strategies, event handling
-- **[04. Pipeline Behaviors](./docs/04-behaviors.md)** - Cross-cutting concerns, behavior chaining, examples
-- **[05. Configuration](./docs/05-configuration.md)** - Complete configuration reference and options
+- **[Notifications & Events](https://github.com/jorg3roch4/MediateX/blob/main/docs/03-notifications.md)** - Pub/sub pattern, publishing strategies, event handling
+- **[Pipeline Behaviors](https://github.com/jorg3roch4/MediateX/blob/main/docs/04-behaviors.md)** - Cross-cutting concerns, behavior chaining, examples
+- **[Configuration](https://github.com/jorg3roch4/MediateX/blob/main/docs/05-configuration.md)** - Complete configuration reference and options
 
 ### Advanced Topics
-- **[06. Exception Handling](./docs/06-exception-handling.md)** - Exception handlers, actions, and strategies
-- **[07. Streaming](./docs/07-streaming.md)** - Working with `IAsyncEnumerable<T>` and stream behaviors
+- **[Exception Handling](https://github.com/jorg3roch4/MediateX/blob/main/docs/06-exception-handling.md)** - Exception handlers, actions, and strategies
+- **[Streaming](https://github.com/jorg3roch4/MediateX/blob/main/docs/07-streaming.md)** - Working with `IAsyncEnumerable<T>` and stream behaviors
 
 ### Examples
-Check out the **[samples folder](./samples/)** for complete working examples with different DI containers and scenarios.
+Check out the **[samples folder](https://github.com/jorg3roch4/MediateX/tree/main/samples)** for complete working examples with different DI containers and scenarios.
 
 ---
 

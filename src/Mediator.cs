@@ -33,10 +33,7 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher p
 
     public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         var handler = (RequestHandlerWrapper<TResponse>)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
         {
@@ -51,10 +48,7 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher p
     public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default)
         where TRequest : IRequest
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         var handler = (RequestHandlerWrapper)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
         {
@@ -68,10 +62,7 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher p
 
     public Task<object?> Send(object request, CancellationToken cancellationToken = default)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         var handler = _requestHandlers.GetOrAdd(request.GetType(), static requestType =>
         {
@@ -105,10 +96,7 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher p
     public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
         where TNotification : INotification
     {
-        if (notification == null)
-        {
-            throw new ArgumentNullException(nameof(notification));
-        }
+        ArgumentNullException.ThrowIfNull(notification);
 
         return PublishNotification(notification, cancellationToken);
     }
@@ -145,10 +133,7 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher p
 
     public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         var streamHandler = (StreamRequestHandlerWrapper<TResponse>)_streamRequestHandlers.GetOrAdd(request.GetType(), static requestType =>
         {
@@ -164,10 +149,7 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher p
 
     public IAsyncEnumerable<object?> CreateStream(object request, CancellationToken cancellationToken = default)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         var handler = _streamRequestHandlers.GetOrAdd(request.GetType(), static requestType =>
         {

@@ -382,7 +382,7 @@ public class StreamBatchingBehavior<TRequest, TResponse>
         StreamHandlerDelegate<TResponse> next,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var batch = new List<TResponse>(_batchSize);
+        List<TResponse> batch = new(_batchSize);
 
         await foreach (var item in next().WithCancellation(cancellationToken))
         {
@@ -599,6 +599,41 @@ public class ParallelStreamHandler
 
 ### Streaming to HTTP Response
 
+#### Minimal API (Recommended)
+
+```csharp
+// Stream as JSON array
+app.MapGet("/api/products/stream", async (
+    [FromQuery] string category,
+    IMediator mediator,
+    CancellationToken cancellationToken) =>
+{
+    var query = new GetProductsStreamQuery(category);
+    return mediator.CreateStream(query, cancellationToken);
+});
+
+// Stream as JSON Lines (NDJSON)
+app.MapGet("/api/products/stream/json-lines", async (
+    [FromQuery] string category,
+    IMediator mediator,
+    HttpContext context,
+    CancellationToken cancellationToken) =>
+{
+    context.Response.ContentType = "application/x-ndjson";
+
+    var query = new GetProductsStreamQuery(category);
+
+    await foreach (var product in mediator.CreateStream(query, cancellationToken))
+    {
+        await context.Response.WriteAsJsonAsync(product, cancellationToken);
+        await context.Response.Body.WriteAsync("\n"u8.ToArray(), cancellationToken);
+        await context.Response.Body.FlushAsync(cancellationToken);
+    }
+});
+```
+
+#### Controller-Based API
+
 ```csharp
 [ApiController]
 [Route("api/[controller]")]
@@ -734,7 +769,7 @@ public async Task Handle_ReturnsStreamedProducts()
     var query = new GetProductsStreamQuery("Electronics");
 
     // Act
-    var results = new List<Product>();
+    List<Product> results = [];
     await foreach (var product in handler.Handle(query, CancellationToken.None))
     {
         results.Add(product);

@@ -12,8 +12,8 @@
     <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
-    <Version>2.0.2</Version>
-    <PackageReleaseNotes>v2.0.2 - Rebranding: Renamed AddMediatR to AddMediateX throughout entire codebase. Breaking change: Update registration calls. v2.0.1 - Fixed NuGet README display. v2.0.0 - Major restructuring: Integrated MediateX.Contracts into main package.</PackageReleaseNotes>
+    <Version>2.1.0</Version>
+    <PackageReleaseNotes>v2.1.0 - Code modernization: Full adoption of C# 9-13 features including Collection Expressions, Pattern Matching, Target-Typed New, and ArgumentNullException.ThrowIfNull. Improved performance and code quality. v2.0.2 - Rebranding to MediateX. v2.0.1 - Fixed NuGet README display. v2.0.0 - Major restructuring.</PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon_128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\assets\icon_128x128.png" Pack="true" PackagePath="" />
+    <None Include="..\assets\icon_128x128.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\README.nuget.md" Pack="true" PackagePath="\README.md" />
+    <None Include="..\README.md" Pack="true" PackagePath="\README.md" />
   </ItemGroup>
 
 </Project>

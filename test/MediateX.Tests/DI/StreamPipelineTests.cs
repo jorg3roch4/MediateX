@@ -58,7 +58,7 @@ public class StreamPipelineTests
     public async Task Should_wrap_with_behavior()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddTransient<IStreamPipelineBehavior<StreamPing, Pong>, OuterBehavior>();
         services.AddTransient<IStreamPipelineBehavior<StreamPing, Pong>, InnerBehavior>();
@@ -88,7 +88,7 @@ public class StreamPipelineTests
     public async Task Should_register_and_wrap_with_behavior()
     {
         var output = new Logger();
-        IServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(output);
         services.AddMediateX(cfg =>
         {

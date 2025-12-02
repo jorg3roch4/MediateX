@@ -15,7 +15,7 @@ class Program
 {
     static Task Main(string[] args)
     {
-        var writer = new WrappingWriter(Console.Out);
+        WrappingWriter writer = new(Console.Out);
         var mediator = BuildMediator(writer);
 
         return Runner.Run(mediator, writer, "Lamar");
@@ -23,7 +23,7 @@ class Program
 
     private static IMediator BuildMediator(WrappingWriter writer)
     {
-        var container = new Container(cfg =>
+        Container container = new(cfg =>
         {
             cfg.Scan(scanner =>
             {

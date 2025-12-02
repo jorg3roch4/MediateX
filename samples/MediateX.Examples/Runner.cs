@@ -318,7 +318,7 @@ public class RunResults
 public class WrappingWriter : TextWriter
 {
     private readonly TextWriter _innerWriter;
-    private readonly StringBuilder _stringWriter = new StringBuilder();
+    private readonly StringBuilder _stringWriter = new();
 
     public WrappingWriter(TextWriter innerWriter)
     {

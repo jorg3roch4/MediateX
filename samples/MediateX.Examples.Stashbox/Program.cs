@@ -13,7 +13,7 @@ class Program
 {
     static Task Main()
     {
-        var writer = new WrappingWriter(Console.Out);
+        WrappingWriter writer = new(Console.Out);
         var mediator = BuildMediator(writer);
         return Runner.Run(mediator, writer, "Stashbox", testStreams: true);
     }
@@ -22,7 +22,7 @@ class Program
     {
         var container = new StashboxContainer()
             .RegisterInstance<TextWriter>(writer)
-            .RegisterAssemblies(new[] { typeof(Mediator).Assembly, typeof(Ping).Assembly }, 
+            .RegisterAssemblies(new[] { typeof(Mediator).Assembly, typeof(Ping).Assembly },
                 serviceTypeSelector: Rules.ServiceRegistrationFilters.Interfaces, registerSelf: false);
 
         return container.GetRequiredService<IMediator>();

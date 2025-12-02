@@ -649,7 +649,7 @@ public async Task LogExceptionAction_LogsException()
 public async Task Send_HandlesNotFoundException()
 {
     // Arrange
-    var services = new ServiceCollection();
+    ServiceCollection services = new();
     services.AddMediateX(cfg =>
     {
         cfg.RegisterServicesFromAssemblyContaining<ProcessPaymentHandler>();

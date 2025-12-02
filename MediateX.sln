@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6267E2ED-942
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{962C5ACA-AB2B-4E9B-9EBB-7E7EE28CDBB1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediateX", "src\MediateX\MediateX.csproj", "{12DA3F16-060B-467A-993F-2DF25EE6E6A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediateX", "src\MediateX.csproj", "{12DA3F16-060B-467A-993F-2DF25EE6E6A8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediateX.Tests", "test\MediateX.Tests\MediateX.Tests.csproj", "{4FB0CFC4-90E3-467F-9704-6FBF637F9B4B}"
 EndProject

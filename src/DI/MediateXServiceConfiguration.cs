@@ -174,7 +174,7 @@ public class MediateXServiceConfiguration
 
         foreach (var implementedBehaviorType in implementedGenericInterfaces)
         {
-            BehaviorsToRegister.Add(new ServiceDescriptor(implementedBehaviorType, implementationType, serviceLifetime));
+            BehaviorsToRegister.Add(new(implementedBehaviorType, implementationType, serviceLifetime));
         }
 
         return this;
@@ -189,7 +189,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddBehavior(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
     {
-        BehaviorsToRegister.Add(new ServiceDescriptor(serviceType, implementationType, serviceLifetime));
+        BehaviorsToRegister.Add(new(serviceType, implementationType, serviceLifetime));
 
         return this;
     }
@@ -208,7 +208,7 @@ public class MediateXServiceConfiguration
         }
 
         var implementedGenericInterfaces = openBehaviorType.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
-        var implementedOpenBehaviorInterfaces = new HashSet<Type>(implementedGenericInterfaces.Where(i => i == typeof(IPipelineBehavior<,>)));
+        HashSet<Type> implementedOpenBehaviorInterfaces = [.. implementedGenericInterfaces.Where(i => i == typeof(IPipelineBehavior<,>))];
 
         if (implementedOpenBehaviorInterfaces.Count == 0)
         {
@@ -217,7 +217,7 @@ public class MediateXServiceConfiguration
 
         foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
         {
-            BehaviorsToRegister.Add(new ServiceDescriptor(openBehaviorInterface, openBehaviorType, serviceLifetime));
+            BehaviorsToRegister.Add(new(openBehaviorInterface, openBehaviorType, serviceLifetime));
         }
 
         return this;
@@ -273,7 +273,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddStreamBehavior(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
     {
-        StreamBehaviorsToRegister.Add(new ServiceDescriptor(serviceType, implementationType, serviceLifetime));
+        StreamBehaviorsToRegister.Add(new(serviceType, implementationType, serviceLifetime));
 
         return this;
     }
@@ -304,7 +304,7 @@ public class MediateXServiceConfiguration
 
         foreach (var implementedBehaviorType in implementedGenericInterfaces)
         {
-            StreamBehaviorsToRegister.Add(new ServiceDescriptor(implementedBehaviorType, implementationType, serviceLifetime));
+            StreamBehaviorsToRegister.Add(new(implementedBehaviorType, implementationType, serviceLifetime));
         }
 
         return this;
@@ -324,7 +324,7 @@ public class MediateXServiceConfiguration
         }
 
         var implementedGenericInterfaces = openBehaviorType.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
-        var implementedOpenBehaviorInterfaces = new HashSet<Type>(implementedGenericInterfaces.Where(i => i == typeof(IStreamPipelineBehavior<,>)));
+        HashSet<Type> implementedOpenBehaviorInterfaces = [.. implementedGenericInterfaces.Where(i => i == typeof(IStreamPipelineBehavior<,>))];
 
         if (implementedOpenBehaviorInterfaces.Count == 0)
         {
@@ -333,7 +333,7 @@ public class MediateXServiceConfiguration
 
         foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
         {
-            StreamBehaviorsToRegister.Add(new ServiceDescriptor(openBehaviorInterface, openBehaviorType, serviceLifetime));
+            StreamBehaviorsToRegister.Add(new(openBehaviorInterface, openBehaviorType, serviceLifetime));
         }
 
         return this;
@@ -358,7 +358,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddRequestPreProcessor(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
     {
-        RequestPreProcessorsToRegister.Add(new ServiceDescriptor(serviceType, implementationType, serviceLifetime));
+        RequestPreProcessorsToRegister.Add(new(serviceType, implementationType, serviceLifetime));
 
         return this;
     }
@@ -390,7 +390,7 @@ public class MediateXServiceConfiguration
 
         foreach (var implementedPreProcessorType in implementedGenericInterfaces)
         {
-            RequestPreProcessorsToRegister.Add(new ServiceDescriptor(implementedPreProcessorType, implementationType, serviceLifetime));
+            RequestPreProcessorsToRegister.Add(new(implementedPreProcessorType, implementationType, serviceLifetime));
         }
         
         return this;
@@ -410,7 +410,7 @@ public class MediateXServiceConfiguration
         }
 
         var implementedGenericInterfaces = openBehaviorType.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
-        var implementedOpenBehaviorInterfaces = new HashSet<Type>(implementedGenericInterfaces.Where(i => i == typeof(IRequestPreProcessor<>)));
+        HashSet<Type> implementedOpenBehaviorInterfaces = [.. implementedGenericInterfaces.Where(i => i == typeof(IRequestPreProcessor<>))];
 
         if (implementedOpenBehaviorInterfaces.Count == 0)
         {
@@ -419,7 +419,7 @@ public class MediateXServiceConfiguration
 
         foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
         {
-            RequestPreProcessorsToRegister.Add(new ServiceDescriptor(openBehaviorInterface, openBehaviorType, serviceLifetime));
+            RequestPreProcessorsToRegister.Add(new(openBehaviorInterface, openBehaviorType, serviceLifetime));
         }
 
         return this;
@@ -444,7 +444,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddRequestPostProcessor(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
     {
-        RequestPostProcessorsToRegister.Add(new ServiceDescriptor(serviceType, implementationType, serviceLifetime));
+        RequestPostProcessorsToRegister.Add(new(serviceType, implementationType, serviceLifetime));
 
         return this;
     }
@@ -475,7 +475,7 @@ public class MediateXServiceConfiguration
 
         foreach (var implementedPostProcessorType in implementedGenericInterfaces)
         {
-            RequestPostProcessorsToRegister.Add(new ServiceDescriptor(implementedPostProcessorType, implementationType, serviceLifetime));
+            RequestPostProcessorsToRegister.Add(new(implementedPostProcessorType, implementationType, serviceLifetime));
         }
         return this;
     }
@@ -494,7 +494,7 @@ public class MediateXServiceConfiguration
         }
 
         var implementedGenericInterfaces = openBehaviorType.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
-        var implementedOpenBehaviorInterfaces = new HashSet<Type>(implementedGenericInterfaces.Where(i => i == typeof(IRequestPostProcessor<,>)));
+        HashSet<Type> implementedOpenBehaviorInterfaces = [.. implementedGenericInterfaces.Where(i => i == typeof(IRequestPostProcessor<,>))];
 
         if (implementedOpenBehaviorInterfaces.Count == 0)
         {
@@ -503,7 +503,7 @@ public class MediateXServiceConfiguration
 
         foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
         {
-            RequestPostProcessorsToRegister.Add(new ServiceDescriptor(openBehaviorInterface, openBehaviorType, serviceLifetime));
+            RequestPostProcessorsToRegister.Add(new(openBehaviorInterface, openBehaviorType, serviceLifetime));
         }
 
         return this;

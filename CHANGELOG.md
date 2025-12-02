@@ -8,6 +8,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+---
+
+## [2.1.0] - 2025-12-01
+
+### ✨ Added
+
+*   **C# 13 Features:** Full adoption of modern C# 9-13 language features for improved code quality and performance
+    *   **Collection Expressions (C# 12):** Modernized 21 collection initializations using `[]` syntax and spread operator `..`
+    *   **Target-Typed New (C# 9):** Applied to 50+ instantiations for reduced verbosity
+    *   **Pattern Matching (C# 9-11):** Enhanced 6 methods with tuple patterns, relational patterns, and or patterns
+    *   **ArgumentNullException.ThrowIfNull (C# 11):** Replaced 6 null checks with concise standard validation
+
+### 🔄 Changed
+
+*   **Code Modernization:** Core, samples, and tests now leverage latest C# features
+    *   Reduced code by ~80 lines while improving readability
+    *   Enhanced pattern matching in `ObjectDetails.cs` and `ServiceRegistrar.cs`
+    *   Streamlined collection handling throughout the codebase
+*   **Project References:** Fixed project references in samples to support new structure
+
+### 🚀 Performance
+
+*   **Optimized Collection Operations:** Collection expressions provide compiler optimizations
+*   **Improved Pattern Matching:** More efficient than traditional if/else chains
+*   **Reduced Allocations:** Target-typed new reduces temporary allocations
+
 ### 📚 Documentation
 
 *   **Complete Documentation Overhaul:** Restructured entire documentation with 7 comprehensive guides covering all features, patterns, and best practices (127 KB total)
@@ -16,6 +42,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     *   Created `docs/README.md` with complete navigation and learning paths
     *   Updated main README with clear feature highlights and documentation links
     *   All 40+ MediateX features now fully documented with code examples and best practices
+    *   **Modernized code examples** in all documentation to use C# 9-13 features (collection expressions, target-typed new, pattern matching)
+    *   **Added Minimal API examples** throughout documentation (Getting Started, Streaming) showing modern .NET approach alongside traditional controllers
+    *   Included complete Minimal API example with CRUD operations, commands, queries, and events
+    *   Updated GitHub repository references from old URLs to correct repository
 
 ---
 

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MediateX\MediateX.csproj" />
+    <ProjectReference Include="..\..\src\MediateX.csproj" />
   </ItemGroup>
 
 </Project>

@@ -13,14 +13,14 @@ public static class Program
 {
     public static Task Main(string[] args)
     {
-        var writer = new WrappingWriter(Console.Out);
+        WrappingWriter writer = new(Console.Out);
         var mediator = BuildMediator(writer);
         return Runner.Run(mediator, writer, "ASP.NET Core DI", testStreams: true);
     }
 
     private static IMediator BuildMediator(WrappingWriter writer)
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         services.AddSingleton<TextWriter>(writer);
 

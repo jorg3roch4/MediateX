@@ -10,13 +10,13 @@ namespace MediateX.Benchmarks
     public class Benchmarks
     {
         private IMediator _mediator;
-        private readonly Ping _request = new Ping {Message = "Hello World"};
-        private readonly Pinged _notification = new Pinged();
+        private readonly Ping _request = new() {Message = "Hello World"};
+        private readonly Pinged _notification = new();
 
         [GlobalSetup]
         public void GlobalSetup()
         {
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
 
             services.AddSingleton(TextWriter.Null);
 

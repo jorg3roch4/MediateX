@@ -31,7 +31,7 @@ public class NotificationPublisherTests
     [Fact]
     public void ShouldResolveDefaultPublisher()
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg =>
         {
@@ -52,7 +52,7 @@ public class NotificationPublisherTests
     public async Task ShouldSubstitutePublisherInstance()
     {
         var publisher = new MockPublisher();
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg =>
         {
@@ -73,7 +73,7 @@ public class NotificationPublisherTests
     [Fact]
     public async Task ShouldSubstitutePublisherServiceType()
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg =>
         {
@@ -99,7 +99,7 @@ public class NotificationPublisherTests
     [Fact]
     public async Task ShouldSubstitutePublisherServiceTypeWithWhenAll()
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(new Logger());
         services.AddMediateX(cfg =>
         {

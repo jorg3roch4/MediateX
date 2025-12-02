@@ -189,7 +189,7 @@ public class StreamPipelineTests
 
     public class Logger
     {
-        public IList<string> Messages { get; } = new List<string>();
+        public IList<string> Messages { get; } = [];
     }
 
     [Fact]

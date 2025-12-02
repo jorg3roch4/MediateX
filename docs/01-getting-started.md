@@ -80,7 +80,22 @@ public class GetWeatherHandler : IRequestHandler<GetWeatherQuery, WeatherForecas
 
 ### 4. Send the Request
 
-Inject `IMediator` and send your request:
+Inject `IMediator` and send your request.
+
+#### Minimal API (Recommended)
+
+```csharp
+// Map endpoints using Minimal API
+app.MapGet("/weather/{city}", async (string city, IMediator mediator) =>
+{
+    var forecast = await mediator.Send(new GetWeatherQuery(city));
+    return Results.Ok(forecast);
+});
+
+app.Run();
+```
+
+#### Controller-Based API
 
 ```csharp
 [ApiController]
@@ -299,6 +314,87 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, Product>
         return Task.FromResult(new Product());
     }
 }
+```
+
+---
+
+## Complete Minimal API Example
+
+Here's a complete example using Minimal API with MediateX:
+
+```csharp
+using MediateX;
+using Microsoft.AspNetCore.Mvc;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services
+builder.Services.AddMediateX(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<Program>();
+});
+
+var app = builder.Build();
+
+// === COMMANDS ===
+app.MapPost("/products", async (
+    [FromBody] CreateProductRequest request,
+    IMediator mediator) =>
+{
+    var command = new CreateProductCommand(request.Name, request.Price);
+    var productId = await mediator.Send(command);
+    return Results.Created($"/products/{productId}", new { id = productId });
+});
+
+app.MapPut("/products/{id}", async (
+    int id,
+    [FromBody] UpdateProductRequest request,
+    IMediator mediator) =>
+{
+    var command = new UpdateProductCommand(id, request.Name, request.Price);
+    await mediator.Send(command);
+    return Results.NoContent();
+});
+
+// === QUERIES ===
+app.MapGet("/products/{id}", async (
+    int id,
+    IMediator mediator) =>
+{
+    var query = new GetProductQuery(id);
+    var product = await mediator.Send(query);
+    return product is not null ? Results.Ok(product) : Results.NotFound();
+});
+
+app.MapGet("/products", async (
+    [FromQuery] string? category,
+    IMediator mediator) =>
+{
+    var query = new GetProductsQuery(category);
+    var products = await mediator.Send(query);
+    return Results.Ok(products);
+});
+
+// === EVENTS ===
+app.MapPost("/orders/{id}/complete", async (
+    int id,
+    IMediator mediator) =>
+{
+    // Complete the order first
+    var command = new CompleteOrderCommand(id);
+    await mediator.Send(command);
+
+    // Then publish event to notify all interested parties
+    await mediator.Publish(new OrderCompletedNotification(id));
+
+    return Results.Ok();
+});
+
+app.Run();
+
+// Request DTOs for Minimal API
+record CreateProductRequest(string Name, decimal Price);
+record UpdateProductRequest(string Name, decimal Price);
 ```
 
 ---

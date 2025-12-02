@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMediateX(this IServiceCollection services,
         Action<MediateXServiceConfiguration> configuration)
     {
-        var serviceConfig = new MediateXServiceConfiguration();
+        MediateXServiceConfiguration serviceConfig = new();
 
         configuration.Invoke(serviceConfig);
 

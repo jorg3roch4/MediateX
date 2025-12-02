@@ -14,7 +14,7 @@ internal static class HandlersOrderer
             return handlers;
         }
 
-        var requestObjectDetails = new ObjectDetails(request);
+        ObjectDetails requestObjectDetails = new(request);
         var handlerObjectsDetails = handlers.Select(static s => new ObjectDetails(s)).ToList();
 
         var uniqueHandlers = RemoveOverridden(handlerObjectsDetails).ToArray();

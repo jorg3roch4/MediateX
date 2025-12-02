@@ -57,7 +57,7 @@ public class Publisher
 
     private Task ParallelWhenAll(IEnumerable<NotificationHandlerExecutor> handlers, INotification notification, CancellationToken cancellationToken)
     {
-        var tasks = new List<Task>();
+        List<Task> tasks = [];
 
         foreach (var handler in handlers)
         {
@@ -69,7 +69,7 @@ public class Publisher
 
     private Task ParallelWhenAny(IEnumerable<NotificationHandlerExecutor> handlers, INotification notification, CancellationToken cancellationToken)
     {
-        var tasks = new List<Task>();
+        List<Task> tasks = [];
 
         foreach (var handler in handlers)
         {
@@ -91,8 +91,8 @@ public class Publisher
 
     private async Task AsyncContinueOnException(IEnumerable<NotificationHandlerExecutor> handlers, INotification notification, CancellationToken cancellationToken)
     {
-        var tasks = new List<Task>();
-        var exceptions = new List<Exception>();
+        List<Task> tasks = [];
+        List<Exception> exceptions = [];
 
         foreach (var handler in handlers)
         {
@@ -135,7 +135,7 @@ public class Publisher
 
     private async Task SyncContinueOnException(IEnumerable<NotificationHandlerExecutor> handlers, INotification notification, CancellationToken cancellationToken)
     {
-        var exceptions = new List<Exception>();
+        List<Exception> exceptions = [];
 
         foreach (var handler in handlers)
         {

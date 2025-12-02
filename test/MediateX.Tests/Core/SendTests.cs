@@ -18,7 +18,7 @@ public class SendTests
     public SendTests()
     {
         _dependency = new Dependency();
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddMediateX(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(typeof(Ping).Assembly);
@@ -302,7 +302,7 @@ public class SendTests
     public async Task Should_resolve_closed_handler_if_defined()
     {
         var dependency = new Dependency();
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(dependency);
         services.AddMediateX(cfg =>
         {
@@ -325,7 +325,7 @@ public class SendTests
     public async Task Should_resolve_open_handler_if_not_defined()
     {
         var dependency = new Dependency();
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton(dependency);
         services.AddMediateX(cfg => 
         {

@@ -13,7 +13,7 @@ class Program
 {
     static Task Main()
     {
-        var writer = new WrappingWriter(Console.Out);
+        WrappingWriter writer = new(Console.Out);
         var mediator = BuildMediator(writer);
 
         return Runner.Run(mediator, writer, "DryIoc");
@@ -21,7 +21,7 @@ class Program
 
     private static IMediator BuildMediator(WrappingWriter writer)
     {
-        var container = new Container();
+        Container container = new();
         // Since Mediator has multiple constructors, consider adding rule to allow that
         // var container = new Container(rules => rules.With(FactoryMethod.ConstructorWithResolvableArguments))
 
@@ -34,7 +34,7 @@ class Program
         //You must select the desired constructor
         container.Register<IMediator, Mediator>(made: Made.Of(() => new Mediator(Arg.Of<IServiceProvider>())));
 
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
 
         var adapterContainer = container.WithDependencyInjectionAdapter(services);
 

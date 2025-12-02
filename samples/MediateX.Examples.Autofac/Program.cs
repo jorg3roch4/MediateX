@@ -19,7 +19,7 @@ internal static class Program
 {
     public static Task Main(string[] args)
     {
-        var writer = new WrappingWriter(Console.Out);
+        WrappingWriter writer = new(Console.Out);
         var mediator = BuildMediator(writer);
 
         return Runner.Run(mediator, writer, "Autofac", testStreams: true);
@@ -28,7 +28,7 @@ internal static class Program
     private static IMediator BuildMediator(WrappingWriter writer)
     {
 
-        var builder = new ContainerBuilder();
+        ContainerBuilder builder = new();
 
         builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly).AsImplementedInterfaces();
 
@@ -71,7 +71,7 @@ internal static class Program
         builder.RegisterGeneric(typeof(ConstrainedPingedHandler<>)).As(typeof(INotificationHandler<>));
 
 
-        var services = new ServiceCollection();
+        ServiceCollection services = new();
         
         builder.Populate(services);
 
@@ -88,7 +88,7 @@ internal static class Program
         //    .ToList();
 
         var container = builder.Build();
-        var serviceProvider = new AutofacServiceProvider(container);
+        AutofacServiceProvider serviceProvider = new(container);
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 
         return mediator;
