@@ -15,10 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		CHANGELOG.md = CHANGELOG.md
-		.github\workflows\ci.yml = .github\workflows\ci.yml
 		Directory.Build.props = Directory.Build.props
 		README.md = README.md
-		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediateX.Benchmarks", "test\MediateX.Benchmarks\MediateX.Benchmarks.csproj", "{1FA62162-F8F1-4CAD-B08E-8DCA603395AD}"
@@ -52,7 +50,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C
 		docs\05-configuration.md = docs\05-configuration.md
 		docs\06-exception-handling.md = docs\06-exception-handling.md
 		docs\07-streaming.md = docs\07-streaming.md
-		docs\features.md = docs\features.md
 		docs\README.md = docs\README.md
 	EndProjectSection
 EndProject

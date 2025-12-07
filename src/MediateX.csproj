@@ -1,27 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Authors>jorg3roch4</Authors>
-    <Description>Modern mediator implementation for .NET 9+ with in-process messaging. Supports request/response, CQRS, notifications, and events. Based on MediatR 12.5.0.</Description>
-    <Copyright>Copyright (c) 2025 JR. Based on MediatR by Jimmy Bogard.</Copyright>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Features>strict</Features>
+
+    <!-- Package Identity -->
+    <PackageId>MediateX</PackageId>
+    <Version>2.1.1</Version>
+    <AssemblyVersion>2.1.1</AssemblyVersion>
+    <FileVersion>2.1.1</FileVersion>
+    <Product>MediateX</Product>
+
+    <!-- Package Metadata -->
+    <Title>MediateX - Modern Mediator for .NET</Title>
+    <Authors>jorg3roch4</Authors>
+    <Description>Modern mediator implementation for .NET 9+ with in-process messaging. Supports request/response, CQRS, notifications, and events. Based on MediatR 12.5.0.</Description>
+    <Copyright>Copyright (c) 2025 jorg3roch4. Based on MediatR by Jimmy Bogard.</Copyright>
     <PackageTags>mediator;request;response;queries;commands;notifications;mediatex;cqrs;events;messaging;pipeline;net9</PackageTags>
     <PackageProjectUrl>https://github.com/jorg3roch4/MediateX</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-
-    <Version>2.1.0</Version>
-    <PackageReleaseNotes>v2.1.0 - Code modernization: Full adoption of C# 9-13 features including Collection Expressions, Pattern Matching, Target-Typed New, and ArgumentNullException.ThrowIfNull. Improved performance and code quality. v2.0.2 - Rebranding to MediateX. v2.0.1 - Fixed NuGet README display. v2.0.0 - Major restructuring.</PackageReleaseNotes>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon_128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReleaseNotes>v2.1.1 - Enhanced NuGet package metadata and documentation. v2.1.0 - Full C# 9-13 modernization. v2.0.2 - Rebranding to MediateX.</PackageReleaseNotes>
+    <NeutralLanguage>en</NeutralLanguage>
+    <MinClientVersion>6.0</MinClientVersion>
+
+    <!-- Repository Information -->
+    <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <!-- Package Validation -->
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>2.0.2</PackageValidationBaselineVersion>
+
+    <!-- Documentation and Symbols -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Build Configuration -->
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>

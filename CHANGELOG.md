@@ -10,6 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [2.1.1] - 2025-12-06
+
+### 📦 Package
+
+*   **Enhanced NuGet Metadata:** Comprehensive package metadata improvements following Microsoft best practices
+    *   Added explicit `PackageId`, `AssemblyVersion`, `FileVersion`, and `Product` properties
+    *   Added `Title` property for better NuGet.org presentation
+    *   Added `NeutralLanguage` (en) for localization support
+    *   Added `MinClientVersion` (6.0) for NuGet client compatibility
+    *   Enabled `PackageValidation` with baseline version 2.0.0 for API compatibility checks
+    *   Enhanced documentation with `GenerateDocumentationFile`
+    *   Added deterministic builds and CI build configuration
+
+### 📚 Documentation
+
+*   **Improved Package Documentation:** Enhanced symbol package generation with `.snupkg` format
+*   **Source Link Integration:** Better source code navigation and debugging experience
+
+---
+
 ## [2.1.0] - 2025-12-01
 
 ### ✨ Added
