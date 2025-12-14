@@ -5,6 +5,8 @@
     <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
     <Features>strict</Features>
+    <NoWarn>$(NoWarn);CS1701;CS1702;CS1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <!-- Package Identity -->
     <PackageId>MediateX</PackageId>
@@ -33,8 +35,10 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
     <!-- Package Validation -->
+    <!-- Note: Baseline validation disabled for v3.0.0 major release (.NET 9 → .NET 10 breaking change) -->
+    <!-- Re-enable with baseline 3.0.0 for future 3.x versions -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>2.1.0</PackageValidationBaselineVersion>
+    <!-- <PackageValidationBaselineVersion>3.0.0</PackageValidationBaselineVersion> -->
 
     <!-- Documentation and Symbols -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

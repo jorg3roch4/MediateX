@@ -222,4 +222,8 @@ _Pvt_Extensions
 
 # Claude Code
 .claude/
-CLAUDE.mdtemp/
+CLAUDE.md
+temp/
+
+# Obsidian
+.obsidian/
