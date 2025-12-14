@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using MediateX.Behaviors;
 using MediateX.ExceptionHandling;
+using MediateX.Internal;
 using MediateX.Processing;
 
 namespace MediateX.Registration;
@@ -16,7 +17,41 @@ public static class ServiceRegistrar
     private static int MaxGenericTypeParameters;
     private static int MaxTypesClosing;
     private static int MaxGenericTypeRegistrations;
-    private static int RegistrationTimeout; 
+    private static int RegistrationTimeout;
+
+    /// <summary>
+    /// Safely retrieves all loadable defined types from an assembly.
+    /// Handles ReflectionTypeLoadException that can occur with assemblies containing
+    /// ByRef-like types (e.g., F# inref parameters, ref structs).
+    /// </summary>
+    internal static IEnumerable<TypeInfo> GetLoadableDefinedTypes(Assembly assembly)
+    {
+        try
+        {
+            return assembly.DefinedTypes;
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            return ex.Types.Where(t => t != null).Select(t => t!.GetTypeInfo());
+        }
+    }
+
+    /// <summary>
+    /// Safely retrieves all loadable types from an assembly.
+    /// Handles ReflectionTypeLoadException that can occur with assemblies containing
+    /// ByRef-like types (e.g., F# inref parameters, ref structs).
+    /// </summary>
+    internal static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
+    {
+        try
+        {
+            return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            return ex.Types.Where(t => t != null)!;
+        }
+    }
 
     public static void SetGenericRequestHandlerRegistrationLimitations(MediateXServiceConfiguration configuration)
     {
@@ -77,7 +112,7 @@ public static class ServiceRegistrar
             var arity = multiOpenInterface.GetGenericArguments().Length;
 
             var concretions = assembliesToScan
-                .SelectMany(a => a.DefinedTypes)
+                .SelectMany(GetLoadableDefinedTypes)
                 .Where(type => type.FindInterfacesThatClose(multiOpenInterface).Any())
                 .Where(type => type.IsConcrete() && type.IsOpenGeneric())
                 .Where(type => type.GetGenericArguments().Length == arity)
@@ -104,7 +139,7 @@ public static class ServiceRegistrar
         List<Type> genericInterfaces = [];
 
         var types = assembliesToScan
-            .SelectMany(a => a.DefinedTypes)
+            .SelectMany(GetLoadableDefinedTypes)
             .Where(t => !t.ContainsGenericParameters || configuration.RegisterGenericHandlers)
             .Where(t => t.IsConcrete() && t.FindInterfacesThatClose(openRequestInterface).Any())
             .Where(configuration.TypeEvaluator)
@@ -135,7 +170,14 @@ public static class ServiceRegistrar
 
         foreach (var @interface in interfaces)
         {
-            var exactMatches = concretions.Where(x => x.CanBeCastTo(@interface)).ToList();
+            // For types that allow multiple registrations (addIfAlreadyExists = true), like INotificationHandler,
+            // use CanHandleInterface to prevent contravariance from incorrectly registering
+            // handlers for derived notification types (fixes issue #1118), while still allowing
+            // generic handlers (e.g., INotificationHandler<INotification>) to work correctly.
+            var exactMatches = addIfAlreadyExists
+                ? concretions.Where(x => CanHandleInterface(x, @interface)).ToList()
+                : concretions.Where(x => x.CanBeCastTo(@interface)).ToList();
+
             if (addIfAlreadyExists)
             {
                 foreach (var type in exactMatches)
@@ -220,7 +262,7 @@ public static class ServiceRegistrar
 
         var typesThatCanCloseForEachParameter = constraintsForEachParameter
             .Select(constraints => assembliesToScan
-                .SelectMany(assembly => assembly.GetTypes())
+                .SelectMany(GetLoadableTypes)
                 .Where(type => type.IsClass && !type.IsAbstract && constraints.All(constraint => constraint.IsAssignableFrom(type))).ToList()
             ).ToList();
 
@@ -319,6 +361,61 @@ public static class ServiceRegistrar
             _ => pluginType.IsAssignableFrom(pluggedType)
         };
 
+    /// <summary>
+    /// Checks if a handler type can handle the specified interface, with special handling for contravariant interfaces.
+    /// For contravariant interfaces like INotificationHandler&lt;in T&gt;:
+    /// - If the handler declares an interface type argument (e.g., INotificationHandler&lt;INotification&gt;),
+    ///   allow polymorphic matching for any notification type
+    /// - If the handler declares a class type argument (e.g., INotificationHandler&lt;E1&gt;),
+    ///   only allow direct implementation to prevent incorrect matching with derived types
+    /// This prevents issue #1118 where handlers for base notification classes incorrectly match derived types,
+    /// while still allowing generic handlers (e.g., INotificationHandler&lt;INotification&gt;) to work correctly.
+    /// </summary>
+    private static bool CanHandleInterface(Type handlerType, Type interfaceType)
+    {
+        // If the handler directly implements the interface, always allow
+        if (handlerType.GetInterfaces().Contains(interfaceType))
+        {
+            return true;
+        }
+
+        // Check if handler can be cast to the interface (contravariance)
+        if (!handlerType.CanBeCastTo(interfaceType))
+        {
+            return false;
+        }
+
+        // Handler can be cast. Now check if we should allow this contravariant registration.
+        // Find the handler's declared interface that makes it compatible
+        if (interfaceType.IsGenericType)
+        {
+            var genericTypeDef = interfaceType.GetGenericTypeDefinition();
+
+            // Find the interface that the handler actually implements
+            var handlerInterface = handlerType.GetInterfaces()
+                .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericTypeDef);
+
+            if (handlerInterface != null)
+            {
+                var handlerTypeArg = handlerInterface.GetGenericArguments()[0];
+
+                // If the handler declares an INTERFACE type argument (like INotification),
+                // allow contravariant matching - this is a "catch-all" handler
+                if (handlerTypeArg.IsInterface)
+                {
+                    return true;
+                }
+
+                // If the handler declares a CLASS type argument (like E1),
+                // don't allow contravariant matching to derived classes (like E2)
+                // This prevents the duplicate invocation issue #1118
+                return false;
+            }
+        }
+
+        return false;
+    }
+
     private static bool IsOpenGeneric(this Type type)
     {
         return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
@@ -412,9 +509,44 @@ public static class ServiceRegistrar
             services.TryAddEnumerable(serviceDescriptor);
         }
 
+        // Process behaviors with nested generics (issue #1051)
+        ProcessNestedGenericBehaviors(services, serviceConfiguration);
+
         foreach (var serviceDescriptor in serviceConfiguration.StreamBehaviorsToRegister)
         {
             services.TryAddEnumerable(serviceDescriptor);
+        }
+    }
+
+    /// <summary>
+    /// Processes behaviors with nested generic response types by closing them against
+    /// concrete request types found in the registered assemblies.
+    /// This enables behaviors like IPipelineBehavior&lt;TRequest, Result&lt;T&gt;&gt; to work correctly.
+    /// </summary>
+    private static void ProcessNestedGenericBehaviors(IServiceCollection services, MediateXServiceConfiguration serviceConfiguration)
+    {
+        if (serviceConfiguration.NestedGenericBehaviorsToRegister.Count == 0)
+            return;
+
+        // Get all concrete request types from registered assemblies
+        var requestTypes = serviceConfiguration.AssembliesToRegister
+            .SelectMany(GetLoadableTypes)
+            .Where(t => t.IsClass && !t.IsAbstract)
+            .Where(t => t.GetInterfaces().Any(i =>
+                i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>)))
+            .Where(serviceConfiguration.TypeEvaluator)
+            .ToList();
+
+        foreach (var (behaviorType, lifetime) in serviceConfiguration.NestedGenericBehaviorsToRegister)
+        {
+            foreach (var requestType in requestTypes)
+            {
+                if (TypeUnifier.TryCreateClosedRegistration(behaviorType, requestType,
+                    out var serviceType, out var implementationType))
+                {
+                    services.TryAddEnumerable(new ServiceDescriptor(serviceType!, implementationType!, lifetime));
+                }
+            }
         }
     }
 

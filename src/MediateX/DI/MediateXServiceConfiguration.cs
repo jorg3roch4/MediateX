@@ -66,6 +66,12 @@ public class MediateXServiceConfiguration
     public List<ServiceDescriptor> RequestPostProcessorsToRegister { get; } = new();
 
     /// <summary>
+    /// List of open behaviors with nested generics that need to be closed against concrete request types.
+    /// These are processed during registration when assemblies are available.
+    /// </summary>
+    internal List<(Type BehaviorType, ServiceLifetime Lifetime)> NestedGenericBehaviorsToRegister { get; } = [];
+
+    /// <summary>
     /// Automatically register processors during assembly scanning
     /// </summary>
     public bool AutoRegisterRequestProcessors { get; set; }
@@ -195,7 +201,9 @@ public class MediateXServiceConfiguration
     }
 
     /// <summary>
-    /// Registers an open behavior type against the <see cref="IPipelineBehavior{TRequest,TResponse}"/> open generic interface type
+    /// Registers an open behavior type against the <see cref="IPipelineBehavior{TRequest,TResponse}"/> open generic interface type.
+    /// Behaviors with nested generics in the response type (e.g., IPipelineBehavior&lt;TRequest, Result&lt;T&gt;&gt;)
+    /// are automatically detected and closed against concrete request types during registration.
     /// </summary>
     /// <param name="openBehaviorType">An open generic behavior type</param>
     /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
@@ -215,9 +223,19 @@ public class MediateXServiceConfiguration
             throw new InvalidOperationException($"{openBehaviorType.Name} must implement {typeof(IPipelineBehavior<,>).FullName}");
         }
 
-        foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
+        // Check if behavior has nested generics in response type (issue #1051)
+        // These need special handling - they must be closed against concrete request types
+        if (TypeUnifier.HasNestedGenericsInResponseType(openBehaviorType))
         {
-            BehaviorsToRegister.Add(new(openBehaviorInterface, openBehaviorType, serviceLifetime));
+            NestedGenericBehaviorsToRegister.Add((openBehaviorType, serviceLifetime));
+        }
+        else
+        {
+            // Standard open generic registration
+            foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
+            {
+                BehaviorsToRegister.Add(new(openBehaviorInterface, openBehaviorType, serviceLifetime));
+            }
         }
 
         return this;

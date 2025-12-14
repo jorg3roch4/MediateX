@@ -1,28 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
     <Features>strict</Features>
 
     <!-- Package Identity -->
     <PackageId>MediateX</PackageId>
-    <Version>2.1.1</Version>
-    <AssemblyVersion>2.1.1</AssemblyVersion>
-    <FileVersion>2.1.1</FileVersion>
+    <Version>3.0.0</Version>
+    <AssemblyVersion>3.0.0</AssemblyVersion>
+    <FileVersion>3.0.0</FileVersion>
     <Product>MediateX</Product>
 
     <!-- Package Metadata -->
     <Title>MediateX - Modern Mediator for .NET</Title>
     <Authors>jorg3roch4</Authors>
-    <Description>Modern mediator implementation for .NET 9+ with in-process messaging. Supports request/response, CQRS, notifications, and events. Based on MediatR 12.5.0.</Description>
+    <Description>Modern mediator implementation for .NET 10+ with in-process messaging. Supports request/response, CQRS, notifications, and events. Based on MediatR 12.5.0.</Description>
     <Copyright>Copyright (c) 2025 jorg3roch4. Based on MediatR by Jimmy Bogard.</Copyright>
-    <PackageTags>mediator;request;response;queries;commands;notifications;mediatex;cqrs;events;messaging;pipeline;net9</PackageTags>
+    <PackageTags>mediator;request;response;queries;commands;notifications;mediatex;cqrs;events;messaging;pipeline;net10</PackageTags>
     <PackageProjectUrl>https://github.com/jorg3roch4/MediateX</PackageProjectUrl>
-    <PackageIcon>icon_128x128.png</PackageIcon>
+    <PackageIcon>icon-128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageReleaseNotes>v2.1.1 - Enhanced NuGet package metadata and documentation. v2.1.0 - Full C# 9-13 modernization. v2.0.2 - Rebranding to MediateX.</PackageReleaseNotes>
+    <PackageReleaseNotes>v3.0.0 - .NET 10 upgrade, improved DI container compatibility, assembly scanning robustness. v2.1.1 - Enhanced NuGet metadata. v2.1.0 - C# 9-13 modernization.</PackageReleaseNotes>
     <NeutralLanguage>en</NeutralLanguage>
     <MinClientVersion>6.0</MinClientVersion>
 
@@ -33,7 +34,7 @@
 
     <!-- Package Validation -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>2.0.2</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>2.1.0</PackageValidationBaselineVersion>
 
     <!-- Documentation and Symbols -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -47,16 +48,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\assets\icon_128x128.png" Pack="true" PackagePath="" />
+    <None Include="..\..\assets\icon-128x128.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\README.md" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\README.md" />
   </ItemGroup>
 
 </Project>

@@ -413,6 +413,82 @@ builder.Services.AddMediateX(cfg =>
 });
 ```
 
+### Nested Generic Response Types
+
+MediateX supports behaviors with nested generic response types. This is useful when your requests return wrapped types like `Result<T>`, `ApiResponse<T>`, or `List<T>`:
+
+```csharp
+// A common Result wrapper type
+public class Result<T>
+{
+    public T? Value { get; set; }
+    public bool IsSuccess { get; set; }
+    public string? Error { get; set; }
+
+    public static Result<T> Success(T value) => new() { Value = value, IsSuccess = true };
+    public static Result<T> Failure(string error) => new() { Error = error, IsSuccess = false };
+}
+
+// Request that returns Result<T>
+public record GetUserQuery(int UserId) : IRequest<Result<UserDto>>;
+
+// Behavior that handles all Result<T> responses
+public class ResultUnwrappingBehavior<TRequest, TValue> : IPipelineBehavior<TRequest, Result<TValue>>
+    where TRequest : IRequest<Result<TValue>>
+{
+    private readonly ILogger<ResultUnwrappingBehavior<TRequest, TValue>> _logger;
+
+    public ResultUnwrappingBehavior(ILogger<ResultUnwrappingBehavior<TRequest, TValue>> logger)
+        => _logger = logger;
+
+    public async Task<Result<TValue>> Handle(
+        TRequest request,
+        RequestHandlerDelegate<Result<TValue>> next,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await next(cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogWarning("Request {RequestName} failed: {Error}",
+                    typeof(TRequest).Name, result.Error);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Request {RequestName} threw an exception", typeof(TRequest).Name);
+            return Result<TValue>.Failure(ex.Message);
+        }
+    }
+}
+
+// Registration - MediateX automatically infers nested type parameters
+builder.Services.AddMediateX(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<Program>();
+    cfg.AddOpenBehavior(typeof(ResultUnwrappingBehavior<,>));
+});
+```
+
+**How it works:** When you register `ResultUnwrappingBehavior<,>`, MediateX uses type unification to automatically match it against all requests returning `Result<T>`. For `GetUserQuery : IRequest<Result<UserDto>>`, it creates `ResultUnwrappingBehavior<GetUserQuery, UserDto>`.
+
+**Supported nesting patterns:**
+
+```csharp
+// Single level nesting
+IPipelineBehavior<TRequest, Result<T>>
+IPipelineBehavior<TRequest, List<T>>
+IPipelineBehavior<TRequest, Option<T>>
+
+// Deep nesting (also supported)
+IPipelineBehavior<TRequest, Result<List<T>>>
+IPipelineBehavior<TRequest, ApiResponse<Dictionary<TKey, List<TValue>>>>
+```
+
 ---
 
 ## Chaining Multiple Behaviors

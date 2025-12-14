@@ -549,6 +549,8 @@ app.Run();
 2. **Multiple assemblies:** Register all assemblies containing handlers
 3. **Type filtering:** Use `TypeEvaluator` to exclude test assemblies or internal handlers
 
+**Note on assembly scanning:** MediateX safely handles assemblies containing types that cannot be loaded (e.g., F# assemblies with `inref`/`outref` types, or assemblies with missing dependencies). These types are silently skipped during registration, preventing `ReflectionTypeLoadException` crashes.
+
 ### Lifetime Management
 
 1. **Default to Transient:** Works for most scenarios

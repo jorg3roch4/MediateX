@@ -1,16 +1,14 @@
-using MediateX.Processing;
-using MediateX.Core;
-using MediateX.Behaviors;
-using MediateX.ExceptionHandling;
-using MediateX;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using LightInject;
-using LightInject.Microsoft.DependencyInjection;
+using MediateX;
+using MediateX.Behaviors;
 using MediateX.Examples;
-using Microsoft.Extensions.DependencyInjection;
+using MediateX.Processing;
+using MediateX.Publishing;
 
 namespace MediateX.Examples.LightInject;
 
@@ -26,37 +24,61 @@ class Program
 
     private static IMediator BuildMediator(WrappingWriter writer)
     {
-        ServiceContainer serviceContainer = new(ContainerOptions.Default.WithMicrosoftSettings());
-        serviceContainer.Register<IMediator, Mediator>();            
-        serviceContainer.RegisterInstance<TextWriter>(writer);
+        ServiceContainer container = new(ContainerOptions.Default);
 
-        serviceContainer.RegisterAssembly(typeof(Ping).GetTypeInfo().Assembly, (serviceType, implementingType) =>
+        // Register handlers from assembly
+        container.RegisterAssembly(typeof(Ping).GetTypeInfo().Assembly, (serviceType, implementingType) =>
             serviceType.IsConstructedGenericType &&
             (
                 serviceType.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) ||
                 serviceType.GetGenericTypeDefinition() == typeof(INotificationHandler<>)
             ));
-                    
-        serviceContainer.RegisterOrdered(typeof(IPipelineBehavior<,>),
-            new[]
-            {
-                typeof(RequestPreProcessorBehavior<,>),
-                typeof(RequestPostProcessorBehavior<,>),
-                typeof(GenericPipelineBehavior<,>)
-            }, type => null);
 
-            
-        serviceContainer.RegisterOrdered(typeof(IRequestPostProcessor<,>),
-            new[]
-            {
-                typeof(GenericRequestPostProcessor<,>),
-                typeof(ConstrainedRequestPostProcessor<,>)
-            }, type => null);
-                   
-        serviceContainer.Register(typeof(IRequestPreProcessor<>), typeof(GenericRequestPreProcessor<>));
+        // Register core services
+        container.RegisterInstance<TextWriter>(writer);
+        container.Register<INotificationPublisher, ForeachAwaitPublisher>(new PerContainerLifetime());
 
-        ServiceCollection services = new();
-        var provider = serviceContainer.CreateServiceProvider(services);
-        return provider.GetRequiredService<IMediator>(); 
+        // Pipeline behaviors
+        container.RegisterOrdered(typeof(IPipelineBehavior<,>),
+        [
+            typeof(RequestPreProcessorBehavior<,>),
+            typeof(RequestPostProcessorBehavior<,>),
+            typeof(GenericPipelineBehavior<,>)
+        ], type => new PerContainerLifetime());
+
+        container.RegisterOrdered(typeof(IRequestPostProcessor<,>),
+        [
+            typeof(GenericRequestPostProcessor<,>),
+            typeof(ConstrainedRequestPostProcessor<,>)
+        ], type => new PerContainerLifetime());
+
+        container.Register(typeof(IRequestPreProcessor<>), typeof(GenericRequestPreProcessor<>), new PerContainerLifetime());
+
+        // Create IServiceProvider adapter and register Mediator
+        var serviceProvider = new LightInjectServiceProvider(container);
+        container.RegisterInstance<IServiceProvider>(serviceProvider);
+        container.Register<IMediator, Mediator>(new PerContainerLifetime());
+
+        return container.GetInstance<IMediator>();
+    }
+}
+
+/// <summary>
+/// Simple IServiceProvider adapter for LightInject container
+/// </summary>
+internal class LightInjectServiceProvider(IServiceContainer container) : IServiceProvider
+{
+    public object? GetService(Type serviceType)
+    {
+        // Handle IEnumerable<T> requests
+        if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+        {
+            var itemType = serviceType.GetGenericArguments()[0];
+            return container.GetAllInstances(itemType);
+        }
+
+        return container.CanGetInstance(serviceType, string.Empty)
+            ? container.GetInstance(serviceType)
+            : null;
     }
 }

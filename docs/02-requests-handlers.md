@@ -126,6 +126,32 @@ public class GetUserQuery : IRequest<User>
 }
 ```
 
+> **Warning: Primary Constructors vs Records (C# 12+)**
+>
+> If you're using C# 12 or later, be aware that **classes with primary constructors** behave differently from **records** and may cause registration issues.
+>
+> ```csharp
+> // ❌ May cause issues - class with primary constructor
+> public class GetUserQuery(int userId) : IRequest<User>
+> {
+>     public int UserId { get; } = userId;
+> }
+>
+> // ✅ Recommended - record with primary constructor
+> public record GetUserQuery(int UserId) : IRequest<User>;
+> ```
+>
+> **Why this happens:**
+> - Classes with primary constructors lack auto-generated value-based equality
+> - Framework reflection may not properly resolve types with primary constructor syntax
+> - Records are specifically designed for immutable data transfer objects
+>
+> **Best practice:** Always use `record` (or `record struct`) for requests and queries. They provide:
+> - Immutability by default
+> - Value-based equality (useful for caching and deduplication)
+> - Concise syntax with primary constructors
+> - Better compatibility with dependency injection and reflection-based frameworks
+
 ### Keep Requests Simple
 
 Requests should be data containers, not behavior:
@@ -421,7 +447,8 @@ var product = (Product)result;
 ## Best Practices Summary
 
 ### Requests
-- ✅ Use records for immutability
+- ✅ Use `record` instead of `class` for immutability
+- ✅ Avoid classes with primary constructors (C# 12+) - use records instead
 - ✅ Keep them simple (data only)
 - ✅ Use descriptive names (Query/Command suffix)
 - ✅ No dependencies injection

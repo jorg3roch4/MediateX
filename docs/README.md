@@ -1,6 +1,6 @@
 # MediateX Documentation
 
-Welcome to the MediateX documentation! This guide will help you master the modern mediator pattern for .NET 9+.
+Welcome to the MediateX documentation! This guide will help you master the modern mediator pattern for .NET 10+.
 
 ---
 
@@ -112,7 +112,7 @@ Welcome to the MediateX documentation! This guide will help you master the moder
 
 All documentation follows these standards:
 
-- **Code Examples**: All examples use modern C# 9-13 features with .NET 9+
+- **Code Examples**: All examples use modern C# 9-14 features with .NET 10+
   - Collection expressions (`[]` syntax)
   - Target-typed new expressions
   - Pattern matching

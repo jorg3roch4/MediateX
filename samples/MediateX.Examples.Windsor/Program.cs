@@ -1,22 +1,19 @@
-using MediateX.Processing;
-using MediateX.Core;
-using MediateX.Behaviors;
-using MediateX.ExceptionHandling;
-using System.Linq;
-using System.Threading.Tasks;
-using MediateX;
-using Castle.MicroKernel.Resolvers.SpecializedResolvers;
-using MediateX.Examples;
-
-namespace MediateX.Examples.Windsor;
-
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using Castle.MicroKernel;
+using System.Linq;
+using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
+using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
+using MediateX;
+using MediateX.Behaviors;
+using MediateX.ExceptionHandling;
+using MediateX.Examples;
+using MediateX.Processing;
+using MediateX.Publishing;
+
+namespace MediateX.Examples.Windsor;
 
 internal class Program
 {
@@ -48,35 +45,10 @@ internal class Program
         container.Register(fromAssemblyContainingPing.BasedOn(typeof(IRequestPreProcessor<>)).WithServiceAllInterfaces().AllowMultipleMatches());
         container.Register(fromAssemblyContainingPing.BasedOn(typeof(IRequestPostProcessor<,>)).WithServiceAllInterfaces().AllowMultipleMatches());
 
-        container.Register(Component.For<IMediator>().ImplementedBy<Mediator>());
         container.Register(Component.For<TextWriter>().Instance(writer));
-        //container.Register(Component.For<ServiceFactory>().UsingFactoryMethod<ServiceFactory>(k => (type =>
-        //{
-        //    var enumerableType = type
-        //        .GetInterfaces()
-        //        .Concat(new[] { type })
-        //        .FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+        container.Register(Component.For<INotificationPublisher>().ImplementedBy<ForeachAwaitPublisher>());
 
-        //    var service = enumerableType?.GetGenericArguments()?[0];
-        //    var resolvedType = enumerableType != null ? k.ResolveAll(service) : k.Resolve(type);
-        //    var genericArguments = service?.GetGenericArguments();
-
-        //    // Handle exceptions even using the base request types for IRequestExceptionHandler<,,>
-        //    var isRequestExceptionHandler = service?.GetGenericTypeDefinition()
-        //        ?.IsAssignableTo(typeof(IRequestExceptionHandler<,,>)) ?? false;
-        //    if (isRequestExceptionHandler)
-        //        return ResolveRequestExceptionHandler(k, type, service, resolvedType, genericArguments);
-
-        //    // Handle exceptions even using the base request types for IRequestExceptionAction<,>
-        //    var isRequestExceptionAction = service?.GetGenericTypeDefinition()
-        //        ?.IsAssignableTo(typeof(IRequestExceptionAction<,>)) ?? false;
-        //    if (isRequestExceptionAction)
-        //        return ResolveRequestExceptionAction(k, type, service, resolvedType, genericArguments);
-            
-        //    return resolvedType;
-        //})));
-
-        //Pipeline
+        // Pipeline
         container.Register(Component.For(typeof(IStreamPipelineBehavior<,>)).ImplementedBy(typeof(GenericStreamPipelineBehavior<,>)));
         container.Register(Component.For(typeof(IPipelineBehavior<,>)).ImplementedBy(typeof(RequestPreProcessorBehavior<,>)).NamedAutomatically("PreProcessorBehavior"));
         container.Register(Component.For(typeof(IPipelineBehavior<,>)).ImplementedBy(typeof(RequestPostProcessorBehavior<,>)).NamedAutomatically("PostProcessorBehavior"));
@@ -86,94 +58,34 @@ internal class Program
         container.Register(Component.For(typeof(IRequestPostProcessor<,>), typeof(ConstrainedRequestPostProcessor<,>)).NamedAutomatically("ConstrainedRequestPostProcessor"));
         container.Register(Component.For(typeof(INotificationHandler<>), typeof(ConstrainedPingedHandler<>)).NamedAutomatically("ConstrainedPingedHandler"));
 
+        // Create IServiceProvider adapter for Windsor
+        var serviceProvider = new WindsorServiceProvider(container);
+        container.Register(Component.For<IServiceProvider>().Instance(serviceProvider));
+        container.Register(Component.For<IMediator>().ImplementedBy<Mediator>());
+
         var mediator = container.Resolve<IMediator>();
 
         return mediator;
     }
+}
 
-    private static object ResolveRequestExceptionHandler(IKernel k, Type type, Type service, object resolvedType, Type[] genericArguments)
+/// <summary>
+/// Simple IServiceProvider adapter for Windsor container
+/// </summary>
+internal class WindsorServiceProvider(IWindsorContainer container) : IServiceProvider
+{
+    public object? GetService(Type serviceType)
     {
-        if (service == null
-        || genericArguments == null
-        || !service.IsInterface
-        || !service.IsGenericType
-        || !service.IsConstructedGenericType
-        || !(service.GetGenericTypeDefinition()
-        ?.IsAssignableTo(typeof(IRequestExceptionHandler<,,>)) ?? false)
-        || genericArguments.Length != 3)
+        // Handle IEnumerable<T> requests
+        if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
         {
-            return resolvedType;
+            var itemType = serviceType.GetGenericArguments()[0];
+            var items = container.ResolveAll(itemType);
+            var typedArray = Array.CreateInstance(itemType, items.Length);
+            items.CopyTo(typedArray, 0);
+            return typedArray;
         }
 
-        var serviceFactory = k.Resolve<ServiceFactory>();
-        var baseRequestType = genericArguments[0].BaseType;
-        var response = genericArguments[1];
-        var exceptionType = genericArguments[2];
-
-        // Check if the base request type is valid
-        if (baseRequestType == null
-        || !baseRequestType.IsClass
-        || baseRequestType == typeof(object)
-        || ((!baseRequestType.GetInterfaces()
-            ?.Any(i => i.IsAssignableFrom(typeof(IRequest<>)))) ?? true))
-        {
-            return resolvedType;
-        }
-
-        var exceptionHandlerInterfaceType = typeof(IRequestExceptionHandler<,,>).MakeGenericType(baseRequestType, response, exceptionType);
-        var enumerableExceptionHandlerInterfaceType = typeof(IEnumerable<>).MakeGenericType(exceptionHandlerInterfaceType);
-        Array resultArray = CreateArraysOutOfResolvedTypeAndEnumerableInterfaceTypes(type, resolvedType, serviceFactory, enumerableExceptionHandlerInterfaceType);
-
-        return resultArray;
-    }
-
-    private static object ResolveRequestExceptionAction(IKernel k, Type type, Type service, object resolvedType, Type[] genericArguments)
-    {
-        if (service == null
-        || genericArguments == null
-        || !service.IsInterface
-        || !service.IsGenericType
-        || !service.IsConstructedGenericType
-        || !(service.GetGenericTypeDefinition()
-        ?.IsAssignableTo(typeof(IRequestExceptionAction<,>)) ?? false)
-        || genericArguments.Length != 2)
-        {
-            return resolvedType;
-        }
-
-        var serviceFactory = k.Resolve<ServiceFactory>();
-        var baseRequestType = genericArguments[0].BaseType;
-        var exceptionType = genericArguments[1];
-
-        // Check if the base request type is valid
-        if (baseRequestType == null
-        || !baseRequestType.IsClass
-        || baseRequestType == typeof(object)
-        || ((!baseRequestType.GetInterfaces()
-            ?.Any(i => i.IsAssignableFrom(typeof(IRequest<>)))) ?? true))
-        {
-            return resolvedType;
-        }
-
-        var exceptionHandlerInterfaceType = typeof(IRequestExceptionAction<,>).MakeGenericType(baseRequestType, exceptionType);
-        var enumerableExceptionHandlerInterfaceType = typeof(IEnumerable<>).MakeGenericType(exceptionHandlerInterfaceType);
-        Array resultArray = CreateArraysOutOfResolvedTypeAndEnumerableInterfaceTypes(type, resolvedType, serviceFactory, enumerableExceptionHandlerInterfaceType);
-
-        return resultArray;
-    }
-
-    private static Array CreateArraysOutOfResolvedTypeAndEnumerableInterfaceTypes(Type type, object resolvedType, ServiceFactory serviceFactory, Type enumerableExceptionHandlerInterfaceType)
-    {
-        var firstArray = serviceFactory.Invoke(enumerableExceptionHandlerInterfaceType) as Array;
-        Debug.Assert(firstArray != null, $"Array '{nameof(firstArray)}' should not be null because this method calls ResolveAll when a {typeof(IEnumerable<>).FullName} " +
-            $"is passed as argument in argument named '{nameof(type)}'");
-
-        var secondArray = resolvedType is Array ? resolvedType as Array : new[] { resolvedType };
-        Debug.Assert(secondArray != null, $"Array '{nameof(secondArray)}' should not be null because '{nameof(resolvedType)}' is an array or created as an array");
-
-        var resultArray = Array.CreateInstance(typeof(object), firstArray.Length + secondArray.Length);
-        Array.Copy(firstArray, resultArray, firstArray.Length);
-        Array.Copy(secondArray, 0, resultArray, firstArray.Length, secondArray.Length);
-        return resultArray;
+        return container.Kernel.HasComponent(serviceType) ? container.Resolve(serviceType) : null;
     }
 }

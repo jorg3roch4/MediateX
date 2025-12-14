@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="Castle.Windsor" Version="5.1.2" />
-    <PackageReference Include="Castle.Windsor.Extensions.DependencyInjection" Version="5.1.2" />
   </ItemGroup>
 
 </Project>

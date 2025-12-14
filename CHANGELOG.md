@@ -10,6 +10,68 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [3.0.0] - 2025-12-13
+
+This release brings MediateX to .NET 10, with significant improvements to DI container compatibility, assembly scanning robustness, and project structure alignment with .NET ecosystem conventions.
+
+### ⚠️ Breaking Changes
+
+*   **Target Framework:** Upgraded from .NET 9 to .NET 10 with C# 14
+    *   All projects now target `net10.0` with `LangVersion 14`
+    *   Microsoft.Extensions.* packages updated from 9.0.0 to 10.0.0
+*   **Project Structure:** Reorganized source code to `src/MediateX/` following .NET ecosystem conventions
+    *   Source code moved from `src/` to `src/MediateX/`
+    *   All project references updated accordingly
+
+### ✨ Added
+
+*   **Assembly Scanning Robustness (MediatR #1140):** Added resilient type loading to handle assemblies with unloadable types
+    *   New `GetLoadableDefinedTypes()` helper method catches `ReflectionTypeLoadException`
+    *   New `GetLoadableTypes()` helper method for safe type enumeration
+    *   Prevents crashes when scanning assemblies containing F# `inref`/`outref` types or other ByRef-like types
+    *   Applied to all 3 vulnerable locations in `ServiceRegistrar.cs`
+
+### 🔄 Changed
+
+*   **Mediator Constructor Simplification:** Changed from 2 constructors to 1 with optional parameter
+    *   Before: Two constructors (with and without `INotificationPublisher`)
+    *   After: Single constructor with `INotificationPublisher? publisher = null`
+    *   Improves compatibility with DI containers that require single public constructors (SimpleInjector, LightInject, etc.)
+*   **Example Projects Modernization:**
+    *   **Windsor:** Removed legacy `ServiceFactory` pattern, created `WindsorServiceProvider` adapter using `IServiceProvider`
+    *   **SimpleInjector:** Added explicit `INotificationPublisher` registration for new constructor pattern
+    *   **LightInject:** Complete rewrite with `LightInjectServiceProvider` adapter implementing `IServiceProvider`
+*   **Dependency Cleanup:**
+    *   Windsor example: Removed unnecessary `Newtonsoft.Json` and `Castle.Windsor.Extensions.DependencyInjection` dependencies
+    *   LightInject example: Removed `LightInject.Microsoft.DependencyInjection` in favor of native adapter
+
+### 📚 Documentation
+
+*   **Primary Constructor Warning (MediatR #1119):** Added documentation about using records instead of primary constructors for request handlers
+    *   New warning section in `docs/02-requests-handlers.md`
+    *   Explains why primary constructors can cause handler duplication issues
+    *   Provides recommended alternatives: regular classes with constructors, or record types
+    *   Updated Best Practices Summary section
+
+### 🐛 Fixed
+
+*   **Notification Handler Duplication (MediatR #1118):** Fixed contravariance-based incorrect handler registration
+    *   Handlers for base notification classes (e.g., `INotificationHandler<E1>`) were incorrectly registered for derived types (`E2`)
+    *   This caused duplicate handler invocations when publishing derived notifications
+    *   New `CanHandleInterface()` method distinguishes between interface and class type arguments
+    *   Generic handlers (`INotificationHandler<INotification>`) still work correctly for all notification types
+    *   Class-based handlers now only respond to their exact declared type
+*   **Nested Generic Behaviors (MediatR #1051):** Fixed `AddOpenBehavior()` failing with nested generic response types
+    *   Behaviors like `IPipelineBehavior<TRequest, Result<T>>` or `IPipelineBehavior<TRequest, List<T>>` now work correctly
+    *   New `TypeUnifier` class implements type unification algorithm to infer nested type parameters
+    *   Automatically closes generic behaviors against concrete request types at registration time
+    *   Supports arbitrary nesting depth (e.g., `Result<Dictionary<TKey, List<TValue>>>`)
+*   **DI Container Compatibility:** All 8 example projects now work correctly with .NET 10
+    *   Autofac, DryIoc, Grace, Lamar, LightInject, Ninject, SimpleInjector, Windsor
+*   **Nullable Annotations:** Added `<Nullable>enable</Nullable>` to Windsor and LightInject example projects
+
+---
+
 ## [2.1.1] - 2025-12-06
 
 ### 📦 Package

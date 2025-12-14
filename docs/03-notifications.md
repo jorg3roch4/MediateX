@@ -400,6 +400,50 @@ builder.Services.AddMediateX(cfg =>
 4. **Make notifications immutable:** Use records or readonly properties
 5. **Handle exceptions:** Decide whether handlers should fail independently or together
 
+### Handler Registration and Inheritance
+
+MediateX uses **strict type matching** for notification handler registration. This means:
+
+```csharp
+// Base notification
+public record OrderNotification(int OrderId) : INotification;
+
+// Derived notification
+public record OrderShippedNotification(int OrderId, string TrackingNumber) : OrderNotification(OrderId);
+
+// Handler for base type
+public class OrderNotificationHandler : INotificationHandler<OrderNotification>
+{
+    public Task Handle(OrderNotification notification, CancellationToken ct) => Task.CompletedTask;
+}
+
+// Handler for derived type
+public class OrderShippedHandler : INotificationHandler<OrderShippedNotification>
+{
+    public Task Handle(OrderShippedNotification notification, CancellationToken ct) => Task.CompletedTask;
+}
+```
+
+**Behavior:**
+- Publishing `OrderNotification` → Only `OrderNotificationHandler` is invoked
+- Publishing `OrderShippedNotification` → Only `OrderShippedHandler` is invoked
+
+The base handler is **not** automatically invoked for derived notifications. This prevents unexpected duplicate handler executions and gives you full control over handler behavior.
+
+**Catch-all handlers:** To handle all notifications, implement `INotificationHandler<INotification>`:
+
+```csharp
+// This handler will be invoked for ALL notification types
+public class AuditLogHandler : INotificationHandler<INotification>
+{
+    public Task Handle(INotification notification, CancellationToken ct)
+    {
+        // Log all notifications
+        return Task.CompletedTask;
+    }
+}
+```
+
 ### Performance Considerations
 
 1. **Choose the right publisher:**

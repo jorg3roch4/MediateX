@@ -17,19 +17,14 @@ namespace MediateX;
 /// Initializes a new instance of the <see cref="Mediator"/> class.
 /// </remarks>
 /// <param name="serviceProvider">Service provider. Can be a scoped or root provider</param>
-/// <param name="publisher">Notification publisher. Defaults to <see cref="ForeachAwaitPublisher"/>.</param>
-public class Mediator(IServiceProvider serviceProvider, INotificationPublisher publisher) : IMediator
+/// <param name="publisher">Notification publisher. Defaults to <see cref="ForeachAwaitPublisher"/> if not specified or null.</param>
+public class Mediator(IServiceProvider serviceProvider, INotificationPublisher? publisher = null) : IMediator
 {
     private static readonly ConcurrentDictionary<Type, RequestHandlerBase> _requestHandlers = new();
     private static readonly ConcurrentDictionary<Type, NotificationHandlerWrapper> _notificationHandlers = new();
     private static readonly ConcurrentDictionary<Type, StreamRequestHandlerBase> _streamRequestHandlers = new();
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Mediator"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">Service provider. Can be a scoped or root provider</param>
-    public Mediator(IServiceProvider serviceProvider) 
-        : this(serviceProvider, new ForeachAwaitPublisher()) { }
+    private readonly INotificationPublisher _publisher = publisher ?? new ForeachAwaitPublisher();
 
     public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
@@ -116,8 +111,8 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher p
     /// <param name="notification">The notification being published</param>
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>A task representing invoking all handlers</returns>
-    protected virtual Task PublishCore(IEnumerable<NotificationHandlerExecutor> handlerExecutors, INotification notification, CancellationToken cancellationToken) 
-        => publisher.Publish(handlerExecutors, notification, cancellationToken);
+    protected virtual Task PublishCore(IEnumerable<NotificationHandlerExecutor> handlerExecutors, INotification notification, CancellationToken cancellationToken)
+        => _publisher.Publish(handlerExecutors, notification, cancellationToken);
 
     private Task PublishNotification(INotification notification, CancellationToken cancellationToken = default)
     {

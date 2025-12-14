@@ -19,8 +19,8 @@ Install-Package MediateX
 ```
 
 **Requirements:**
-- .NET 9.0 or higher
-- C# 13
+- .NET 10.0 or higher
+- C# 14
 
 ---
 

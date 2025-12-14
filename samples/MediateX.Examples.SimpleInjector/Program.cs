@@ -2,6 +2,7 @@ using MediateX.Processing;
 using MediateX.Core;
 using MediateX.Behaviors;
 using MediateX.ExceptionHandling;
+using MediateX.Publishing;
 using MediateX;
 using System.IO;
 using System.Threading.Tasks;
@@ -45,6 +46,7 @@ internal static class Program
         RegisterHandlers(container, typeof(IStreamRequestHandler<,>), assemblies);
 
         container.Register(() => (TextWriter) writer, Lifestyle.Singleton);
+        container.RegisterSingleton<INotificationPublisher, ForeachAwaitPublisher>();
 
         //Pipeline
         container.Collection.Register(typeof(IPipelineBehavior<,>), new[]
