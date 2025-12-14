@@ -49,6 +49,9 @@
     <!-- Build Configuration -->
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+    <!-- Package Output -->
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\artifacts</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
