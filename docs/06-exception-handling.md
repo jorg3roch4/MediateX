@@ -1,6 +1,6 @@
 # Exception Handling
 
-MediateX provides powerful exception handling capabilities that allow you to handle exceptions gracefully within the request pipeline, without cluttering your handlers with try-catch blocks.
+MediateX lets you handle exceptions in the request pipeline instead of cluttering handlers with try-catch blocks.
 
 ---
 

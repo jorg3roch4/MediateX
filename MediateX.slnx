@@ -1,0 +1,36 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="CHANGELOG.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/docs/">
+    <File Path="docs/01-getting-started.md" />
+    <File Path="docs/02-requests-handlers.md" />
+    <File Path="docs/03-notifications.md" />
+    <File Path="docs/04-behaviors.md" />
+    <File Path="docs/05-configuration.md" />
+    <File Path="docs/06-exception-handling.md" />
+    <File Path="docs/07-streaming.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/MediateX/MediateX.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/MediateX.Tests/MediateX.Tests.csproj" />
+    <Project Path="test/MediateX.Benchmarks/MediateX.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/MediateX.Examples/MediateX.Examples.csproj" />
+    <Project Path="samples/MediateX.Examples.AspNetCore/MediateX.Examples.AspNetCore.csproj" />
+    <Project Path="samples/MediateX.Examples.Autofac/MediateX.Examples.Autofac.csproj" />
+    <Project Path="samples/MediateX.Examples.DryIoc/MediateX.Examples.DryIoc.csproj" />
+    <Project Path="samples/MediateX.Examples.Lamar/MediateX.Examples.Lamar.csproj" />
+    <Project Path="samples/MediateX.Examples.LightInject/MediateX.Examples.LightInject.csproj" />
+    <Project Path="samples/MediateX.Examples.PublishStrategies/MediateX.Examples.PublishStrategies.csproj" />
+    <Project Path="samples/MediateX.Examples.SimpleInjector/MediateX.Examples.SimpleInjector.csproj" />
+    <Project Path="samples/MediateX.Examples.Stashbox/MediateX.Examples.Stashbox.csproj" />
+    <Project Path="samples/MediateX.Examples.Windsor/MediateX.Examples.Windsor.csproj" />
+  </Folder>
+</Solution>

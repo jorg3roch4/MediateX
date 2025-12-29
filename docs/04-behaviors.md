@@ -1,6 +1,6 @@
 # Pipeline Behaviors
 
-Pipeline behaviors in MediateX provide a powerful way to add cross-cutting concerns to your request/response pipeline. They wrap around request handlers, allowing you to execute logic before and after the handler executes.
+Behaviors wrap around request handlers, letting you execute logic before and after the handler runs. Use them for cross-cutting concerns like logging, validation, caching, and transactions.
 
 ---
 

@@ -106,7 +106,7 @@ The base class automatically wraps your synchronous code in a completed `Task`.
 
 ## Multiple Handlers Example
 
-One of the most powerful features of notifications is the ability to have multiple handlers:
+A single notification can have multiple handlers:
 
 ```csharp
 // The notification

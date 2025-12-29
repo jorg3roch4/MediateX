@@ -1,24 +1,12 @@
 # Requests & Handlers
 
-This guide covers everything you need to know about requests and handlers in MediateX.
-
----
-
-## Table of Contents
-
-- [Request Types](#request-types)
-- [Handler Types](#handler-types)
-- [Request Guidelines](#request-guidelines)
-- [Handler Guidelines](#handler-guidelines)
-- [Advanced Patterns](#advanced-patterns)
-
 ---
 
 ## Request Types
 
 ### IRequest<TResponse>
 
-Represents a request that returns a typed response.
+A request that returns a typed response.
 
 ```csharp
 public record GetProductQuery(int ProductId) : IRequest<Product>;

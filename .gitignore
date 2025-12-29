@@ -225,6 +225,7 @@ _Pvt_Extensions
 .claude/
 CLAUDE.md
 temp/
+references/
 
 # Obsidian
 .obsidian/

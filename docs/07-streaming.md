@@ -1,6 +1,6 @@
 # Streaming Requests
 
-MediateX supports streaming responses using `IAsyncEnumerable<T>`, allowing you to process and return data incrementally rather than waiting for the entire result set. This is ideal for large datasets, real-time data, or progressive processing scenarios.
+MediateX supports streaming responses using `IAsyncEnumerable<T>`. Instead of returning all data at once, you can yield items as they become available. Useful for large datasets, real-time data, or progressive loading.
 
 ---
 

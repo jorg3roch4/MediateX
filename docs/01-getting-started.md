@@ -1,26 +1,16 @@
-# Getting Started with MediateX
+# Getting Started
 
-Get up and running with MediateX in minutes! This guide will walk you through installation, basic setup, and your first request/response.
+This guide covers installation, basic setup, and your first request/response.
 
 ---
 
 ## Installation
 
-Install MediateX via NuGet:
-
 ```bash
 dotnet add package MediateX
 ```
 
-Or using Package Manager Console:
-
-```powershell
-Install-Package MediateX
-```
-
-**Requirements:**
-- .NET 10.0 or higher
-- C# 14
+**Requirements:** .NET 10.0+, C# 14
 
 ---
 
@@ -28,14 +18,9 @@ Install-Package MediateX
 
 ### 1. Register MediateX
 
-In your `Program.cs`, register MediateX and tell it which assembly contains your handlers:
-
 ```csharp
-using Microsoft.Extensions.DependencyInjection;
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Register MediateX
 builder.Services.AddMediateX(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
@@ -45,13 +30,9 @@ var app = builder.Build();
 app.Run();
 ```
 
-### 2. Create Your First Request
-
-Define a request using the `IRequest<TResponse>` interface:
+### 2. Create a Request
 
 ```csharp
-using MediateX;
-
 public record GetWeatherQuery(string City) : IRequest<WeatherForecast>;
 
 public record WeatherForecast(string City, int Temperature, string Condition);
@@ -59,20 +40,14 @@ public record WeatherForecast(string City, int Temperature, string Condition);
 
 ### 3. Create a Handler
 
-Implement `IRequestHandler<TRequest, TResponse>` to handle your request:
-
 ```csharp
-using MediateX;
-
 public class GetWeatherHandler : IRequestHandler<GetWeatherQuery, WeatherForecast>
 {
     public async Task<WeatherForecast> Handle(
         GetWeatherQuery request,
         CancellationToken cancellationToken)
     {
-        // Simulate fetching weather data
         await Task.Delay(100, cancellationToken);
-
         return new WeatherForecast(request.City, 72, "Sunny");
     }
 }
@@ -80,22 +55,17 @@ public class GetWeatherHandler : IRequestHandler<GetWeatherQuery, WeatherForecas
 
 ### 4. Send the Request
 
-Inject `IMediator` and send your request.
-
-#### Minimal API (Recommended)
+**Minimal API:**
 
 ```csharp
-// Map endpoints using Minimal API
 app.MapGet("/weather/{city}", async (string city, IMediator mediator) =>
 {
     var forecast = await mediator.Send(new GetWeatherQuery(city));
     return Results.Ok(forecast);
 });
-
-app.Run();
 ```
 
-#### Controller-Based API
+**Controller:**
 
 ```csharp
 [ApiController]
@@ -119,12 +89,11 @@ public class WeatherController : ControllerBase
 
 ## Request Types
 
-### Requests with Response
+### With Response
 
 Use `IRequest<TResponse>` when you need a return value:
 
 ```csharp
-// Query example
 public record GetUserQuery(int UserId) : IRequest<User>;
 
 public class GetUserHandler : IRequestHandler<GetUserQuery, User>
@@ -137,16 +106,14 @@ public class GetUserHandler : IRequestHandler<GetUserQuery, User>
         => _repo.GetByIdAsync(request.UserId, cancellationToken);
 }
 
-// Usage
 var user = await mediator.Send(new GetUserQuery(123));
 ```
 
-### Requests without Response (Commands)
+### Without Response (Void)
 
-Use `IRequest` (no generic parameter) for void operations:
+Use `IRequest` for operations that don't return data:
 
 ```csharp
-// Command example
 public record CreateUserCommand(string Name, string Email) : IRequest;
 
 public class CreateUserHandler : IRequestHandler<CreateUserCommand>
@@ -162,13 +129,12 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand>
     }
 }
 
-// Usage
 await mediator.Send(new CreateUserCommand("John Doe", "john@example.com"));
 ```
 
 ### Using Unit Type
 
-Alternatively, use `Unit` for consistent return types:
+If you want consistent return types across all requests:
 
 ```csharp
 public record DeleteUserCommand(int UserId) : IRequest<Unit>;
@@ -177,8 +143,8 @@ public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
 {
     public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
-        // Delete user logic
-        return Unit.Value; // or: return await Unit.Task;
+        // Delete logic
+        return Unit.Value;
     }
 }
 ```
@@ -187,79 +153,46 @@ public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
 
 ## Notifications (Pub/Sub)
 
-Notifications allow you to publish events to multiple handlers.
-
-### Define a Notification
+Notifications go to multiple handlers. Requests go to one.
 
 ```csharp
 public record OrderPlacedNotification(int OrderId, decimal Total) : INotification;
-```
 
-### Create Multiple Handlers
-
-```csharp
-// Handler 1: Send confirmation email
 public class EmailHandler : INotificationHandler<OrderPlacedNotification>
-{
-    public async Task Handle(OrderPlacedNotification notification, CancellationToken cancellationToken)
-    {
-        // Send email logic
-        await Task.CompletedTask;
-    }
-}
-
-// Handler 2: Update inventory
-public class InventoryHandler : INotificationHandler<OrderPlacedNotification>
-{
-    public async Task Handle(OrderPlacedNotification notification, CancellationToken cancellationToken)
-    {
-        // Update inventory logic
-        await Task.CompletedTask;
-    }
-}
-
-// Handler 3: Log event
-public class AuditHandler : INotificationHandler<OrderPlacedNotification>
 {
     public Task Handle(OrderPlacedNotification notification, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"Order {notification.OrderId} placed for ${notification.Total}");
+        // Send email
         return Task.CompletedTask;
     }
 }
-```
 
-### Publish the Notification
+public class InventoryHandler : INotificationHandler<OrderPlacedNotification>
+{
+    public Task Handle(OrderPlacedNotification notification, CancellationToken cancellationToken)
+    {
+        // Update inventory
+        return Task.CompletedTask;
+    }
+}
 
-```csharp
-// All handlers will be invoked
+// All handlers execute
 await mediator.Publish(new OrderPlacedNotification(123, 99.99m));
 ```
 
 ---
 
-## Mediator Interfaces
+## Interface Options
 
-MediateX provides three interfaces for different use cases:
+MediateX provides three interfaces:
 
-### IMediator
-Combines both `ISender` and `IPublisher`. Use when you need both capabilities.
+| Interface | Use Case |
+|-----------|----------|
+| `IMediator` | Need both Send and Publish |
+| `ISender` | Only need Send (request/response) |
+| `IPublisher` | Only need Publish (notifications) |
 
-```csharp
-public class OrderService
-{
-    private readonly IMediator _mediator;
-
-    public async Task ProcessOrder(int orderId)
-    {
-        var order = await _mediator.Send(new GetOrderQuery(orderId));
-        await _mediator.Publish(new OrderProcessed(orderId));
-    }
-}
-```
-
-### ISender
-Use when you only need request/response (Send operations).
+I recommend using `ISender` or `IPublisher` when you only need one capability. It makes dependencies clearer.
 
 ```csharp
 public class QueryService
@@ -269,13 +202,8 @@ public class QueryService
     public Task<Product> GetProduct(int id)
         => _sender.Send(new GetProductQuery(id));
 }
-```
 
-### IPublisher
-Use when you only need to publish notifications.
-
-```csharp
-public class EventPublisher
+public class EventService
 {
     private readonly IPublisher _publisher;
 
@@ -288,120 +216,23 @@ public class EventPublisher
 
 ## CQRS Pattern
 
-MediateX naturally supports Command Query Responsibility Segregation (CQRS):
+MediateX fits naturally with CQRS. Commands modify state, queries read it:
 
 ```csharp
-// === COMMANDS (Modify State) ===
-public record CreateProductCommand(string Name, decimal Price) : IRequest<int>; // Returns ID
+// Command - modifies state
+public record CreateProductCommand(string Name, decimal Price) : IRequest<int>;
 
-public class CreateProductHandler : IRequestHandler<CreateProductCommand, int>
-{
-    public Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
-    {
-        // Create product and return ID
-        return Task.FromResult(42);
-    }
-}
-
-// === QUERIES (Read State) ===
+// Query - reads state
 public record GetProductQuery(int Id) : IRequest<Product>;
-
-public class GetProductHandler : IRequestHandler<GetProductQuery, Product>
-{
-    public Task<Product> Handle(GetProductQuery request, CancellationToken cancellationToken)
-    {
-        // Fetch and return product
-        return Task.FromResult(new Product());
-    }
-}
 ```
 
----
-
-## Complete Minimal API Example
-
-Here's a complete example using Minimal API with MediateX:
-
-```csharp
-using MediateX;
-using Microsoft.AspNetCore.Mvc;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services
-builder.Services.AddMediateX(cfg =>
-{
-    cfg.RegisterServicesFromAssemblyContaining<Program>();
-});
-
-var app = builder.Build();
-
-// === COMMANDS ===
-app.MapPost("/products", async (
-    [FromBody] CreateProductRequest request,
-    IMediator mediator) =>
-{
-    var command = new CreateProductCommand(request.Name, request.Price);
-    var productId = await mediator.Send(command);
-    return Results.Created($"/products/{productId}", new { id = productId });
-});
-
-app.MapPut("/products/{id}", async (
-    int id,
-    [FromBody] UpdateProductRequest request,
-    IMediator mediator) =>
-{
-    var command = new UpdateProductCommand(id, request.Name, request.Price);
-    await mediator.Send(command);
-    return Results.NoContent();
-});
-
-// === QUERIES ===
-app.MapGet("/products/{id}", async (
-    int id,
-    IMediator mediator) =>
-{
-    var query = new GetProductQuery(id);
-    var product = await mediator.Send(query);
-    return product is not null ? Results.Ok(product) : Results.NotFound();
-});
-
-app.MapGet("/products", async (
-    [FromQuery] string? category,
-    IMediator mediator) =>
-{
-    var query = new GetProductsQuery(category);
-    var products = await mediator.Send(query);
-    return Results.Ok(products);
-});
-
-// === EVENTS ===
-app.MapPost("/orders/{id}/complete", async (
-    int id,
-    IMediator mediator) =>
-{
-    // Complete the order first
-    var command = new CompleteOrderCommand(id);
-    await mediator.Send(command);
-
-    // Then publish event to notify all interested parties
-    await mediator.Publish(new OrderCompletedNotification(id));
-
-    return Results.Ok();
-});
-
-app.Run();
-
-// Request DTOs for Minimal API
-record CreateProductRequest(string Name, decimal Price);
-record UpdateProductRequest(string Name, decimal Price);
-```
+Name your requests accordingly: `*Query` for reads, `*Command` for writes.
 
 ---
 
 ## Dependency Injection
 
-Handlers support constructor injection:
+Handlers work with standard .NET DI:
 
 ```csharp
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, int>
@@ -434,117 +265,41 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, int>
 }
 ```
 
-**Important:** Inject dependencies into **handlers**, not requests. Requests should be simple data containers.
+Inject dependencies into handlers, not requests. Requests are just data.
 
 ---
 
-## Best Practices
+## Guidelines
 
-### ✅ Do's
+**Do:**
+- Use records for requests (immutable, concise)
+- Keep handlers focused on one thing
+- Pass `CancellationToken` to all async operations
+- Name requests clearly: `GetProductQuery`, `CreateOrderCommand`
 
-- **Use records for requests** - Immutable and concise
-- **Keep handlers focused** - Single responsibility per handler
-- **Pass CancellationToken** - Always forward to async operations
-- **Inject dependencies in handlers** - Not in requests
-- **Use descriptive names** - `GetProductQuery`, `CreateOrderCommand`
-- **Return specific types** - Avoid `object` or `dynamic`
-
-### ❌ Don'ts
-
-- **Don't inject services in requests** - Requests are data, not behavior
-- **Don't share state in handlers** - Keep handlers stateless
-- **Don't ignore CancellationToken** - Always respect cancellation
-- **Don't create multiple handlers for same request** - One request = one handler
-- **Don't put business logic in controllers** - Move it to handlers
-
----
-
-## Common Patterns
-
-### Repository Pattern
-
-```csharp
-public record GetAllProductsQuery : IRequest<List<Product>>;
-
-public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, List<Product>>
-{
-    private readonly IProductRepository _repository;
-
-    public GetAllProductsHandler(IProductRepository repository)
-        => _repository = repository;
-
-    public Task<List<Product>> Handle(
-        GetAllProductsQuery request,
-        CancellationToken cancellationToken)
-        => _repository.GetAllAsync(cancellationToken);
-}
-```
-
-### Service Layer Pattern
-
-```csharp
-public record ProcessPaymentCommand(int OrderId, decimal Amount) : IRequest<bool>;
-
-public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentCommand, bool>
-{
-    private readonly IPaymentService _paymentService;
-
-    public ProcessPaymentHandler(IPaymentService paymentService)
-        => _paymentService = paymentService;
-
-    public async Task<bool> Handle(
-        ProcessPaymentCommand request,
-        CancellationToken cancellationToken)
-    {
-        var result = await _paymentService.ChargeAsync(
-            request.OrderId,
-            request.Amount,
-            cancellationToken);
-
-        return result.Success;
-    }
-}
-```
+**Don't:**
+- Put services in requests
+- Share state between handler calls
+- Ignore `CancellationToken`
+- Create multiple handlers for the same request type
 
 ---
 
 ## Troubleshooting
 
-### Handler Not Found
+**Handler not found:**
+- Check the assembly is registered: `cfg.RegisterServicesFromAssemblyContaining<YourHandler>()`
+- Verify handler is public and not abstract
+- Confirm handler implements the correct interface
 
-**Problem:** `InvalidOperationException: Handler was not found for request`
-
-**Solutions:**
-- Ensure handler assembly is registered: `cfg.RegisterServicesFromAssemblyContaining<YourHandler>()`
-- Verify handler implements correct interface
-- Check handler class is public and not abstract
-- Confirm handler is in registered assembly
-
-### Multiple Handlers Error
-
-**Problem:** Multiple handlers found for a request
-
-**Solution:** Only one handler should implement `IRequestHandler<TRequest, TResponse>` for each request type. Use `INotificationHandler<>` if you need multiple handlers.
-
-### Dependency Not Resolved
-
-**Problem:** Handler dependencies not injected
-
-**Solution:** Ensure all handler dependencies are registered in DI container before calling `AddMediateX()`.
+**Dependencies not resolved:**
+- Register handler dependencies before calling `AddMediateX()`
 
 ---
 
 ## Next Steps
 
-Now that you understand the basics, explore advanced features:
-
-- **[Requests & Handlers](./02-requests-handlers.md)** - Deep dive into requests and handlers
-- **[Notifications & Events](./03-notifications.md)** - Publishing strategies and event handling
-- **[Pipeline Behaviors](./04-behaviors.md)** - Add cross-cutting concerns
-- **[Configuration](./05-configuration.md)** - Complete configuration reference
-- **[Exception Handling](./06-exception-handling.md)** - Advanced error handling
-- **[Streaming](./07-streaming.md)** - Work with async streams
-
----
-
-**Ready to build?** Start with simple requests and gradually add behaviors and advanced features as needed.
+- [Requests & Handlers](./02-requests-handlers.md) - More on request patterns
+- [Notifications](./03-notifications.md) - Publishing strategies
+- [Pipeline Behaviors](./04-behaviors.md) - Cross-cutting concerns
+- [Configuration](./05-configuration.md) - All options
