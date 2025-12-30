@@ -644,25 +644,25 @@ public class PipelineTests
     [Fact]
     public void Should_throw_when_adding_non_open_behavior()
     {
-        Should.Throw<InvalidOperationException>(() => new MediateXServiceConfiguration().AddOpenBehavior(typeof(NotAnOpenBehavior)));
+        Should.Throw<InvalidOperationException>(() => new ServiceConfiguration().AddOpenBehavior(typeof(NotAnOpenBehavior)));
     }
 
     [Fact]
     public void Should_throw_when_adding_non_open_stream_behavior()
     {
-        Should.Throw<InvalidOperationException>(() => new MediateXServiceConfiguration().AddOpenBehavior(typeof(NotAnOpenStreamBehavior)));
+        Should.Throw<InvalidOperationException>(() => new ServiceConfiguration().AddOpenBehavior(typeof(NotAnOpenStreamBehavior)));
     }
 
     [Fact]
     public void Should_throw_when_adding_random_generic_type_as_open_behavior()
     {
-        Should.Throw<InvalidOperationException>(() => new MediateXServiceConfiguration().AddOpenBehavior(typeof(List<string>)));
+        Should.Throw<InvalidOperationException>(() => new ServiceConfiguration().AddOpenBehavior(typeof(List<string>)));
     }
 
     [Fact]
     public void Should_handle_open_behavior_registration()
     {
-        var cfg = new MediateXServiceConfiguration();
+        var cfg = new ServiceConfiguration();
         cfg.AddOpenBehavior(typeof(OpenBehavior<,>));
         cfg.AddOpenStreamBehavior(typeof(OpenStreamBehavior<,>));
 
@@ -695,7 +695,7 @@ public class PipelineTests
     [Fact]
     public void Should_handle_inferred_behavior_registration()
     {
-        var cfg = new MediateXServiceConfiguration();
+        var cfg = new ServiceConfiguration();
         cfg.AddBehavior<InnerBehavior>();
         cfg.AddBehavior(typeof(OuterBehavior));
 
@@ -727,7 +727,7 @@ public class PipelineTests
     [Fact]
     public void Should_handle_inferred_stream_behavior_registration()
     {
-        var cfg = new MediateXServiceConfiguration();
+        var cfg = new ServiceConfiguration();
         cfg.AddStreamBehavior<InnerStreamBehavior>();
         cfg.AddStreamBehavior(typeof(OuterStreamBehavior));
 
@@ -758,7 +758,7 @@ public class PipelineTests
     [Fact]
     public void Should_handle_inferred_pre_processor_registration()
     {
-        var cfg = new MediateXServiceConfiguration();
+        var cfg = new ServiceConfiguration();
         cfg.AddRequestPreProcessor<FirstConcretePreProcessor>();
         cfg.AddRequestPreProcessor(typeof(NextConcretePreProcessor));
 
@@ -789,7 +789,7 @@ public class PipelineTests
     [Fact]
     public void Should_handle_inferred_post_processor_registration()
     {
-        var cfg = new MediateXServiceConfiguration();
+        var cfg = new ServiceConfiguration();
         cfg.AddRequestPostProcessor<FirstConcretePostProcessor>();
         cfg.AddRequestPostProcessor(typeof(NextConcretePostProcessor));
 
@@ -820,7 +820,7 @@ public class PipelineTests
     [Fact]
     public void Should_handle_open_behaviors_registration_from_a_single_type()
     {
-        var cfg = new MediateXServiceConfiguration();
+        var cfg = new ServiceConfiguration();
         cfg.AddOpenBehavior(typeof(MultiOpenBehavior<,>), ServiceLifetime.Singleton);
         cfg.AddOpenStreamBehavior(typeof(MultiOpenBehavior<,>), ServiceLifetime.Singleton);
 
@@ -853,7 +853,7 @@ public class PipelineTests
     [Fact]
     public void Should_auto_register_processors_when_configured_including_all_concrete_types()
     {
-        var cfg = new MediateXServiceConfiguration
+        var cfg = new ServiceConfiguration
         {
             AutoRegisterRequestProcessors = true
         };

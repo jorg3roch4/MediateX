@@ -10,9 +10,9 @@
 
     <!-- Package Identity -->
     <PackageId>MediateX</PackageId>
-    <Version>3.0.0</Version>
-    <AssemblyVersion>3.0.0</AssemblyVersion>
-    <FileVersion>3.0.0</FileVersion>
+    <Version>3.1.0</Version>
+    <AssemblyVersion>3.1.0</AssemblyVersion>
+    <FileVersion>3.1.0</FileVersion>
     <Product>MediateX</Product>
 
     <!-- Package Metadata -->
@@ -25,7 +25,7 @@
     <PackageIcon>icon-128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageReleaseNotes>v3.0.0 - .NET 10 upgrade, improved DI container compatibility, assembly scanning robustness. v2.1.1 - Enhanced NuGet metadata. v2.1.0 - C# 9-13 modernization.</PackageReleaseNotes>
+    <PackageReleaseNotes>v3.1.0 - Result&lt;T&gt; pattern, ValidationBehavior, LoggingBehavior, RetryBehavior, TimeoutBehavior. v3.0.0 - .NET 10 upgrade, improved DI container compatibility.</PackageReleaseNotes>
     <NeutralLanguage>en</NeutralLanguage>
     <MinClientVersion>6.0</MinClientVersion>
 
@@ -35,10 +35,8 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
     <!-- Package Validation -->
-    <!-- Note: Baseline validation disabled for v3.0.0 major release (.NET 9 → .NET 10 breaking change) -->
-    <!-- Re-enable with baseline 3.0.0 for future 3.x versions -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <!-- <PackageValidationBaselineVersion>3.0.0</PackageValidationBaselineVersion> -->
+    <PackageValidationBaselineVersion>3.0.0</PackageValidationBaselineVersion>
 
     <!-- Documentation and Symbols -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -60,6 +58,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 

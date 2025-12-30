@@ -53,7 +53,7 @@ public static class ServiceRegistrar
         }
     }
 
-    public static void SetGenericRequestHandlerRegistrationLimitations(MediateXServiceConfiguration configuration)
+    public static void SetGenericRequestHandlerRegistrationLimitations(ServiceConfiguration configuration)
     {
         MaxGenericTypeParameters = configuration.MaxGenericTypeParameters;
         MaxTypesClosing = configuration.MaxTypesClosing;
@@ -61,7 +61,7 @@ public static class ServiceRegistrar
         RegistrationTimeout = configuration.RegistrationTimeout;
     }
 
-    public static void AddMediateXClassesWithTimeout(IServiceCollection services, MediateXServiceConfiguration configuration)
+    public static void AddMediateXClassesWithTimeout(IServiceCollection services, ServiceConfiguration configuration)
     {
         using(CancellationTokenSource cts = new(RegistrationTimeout))
         {
@@ -76,7 +76,7 @@ public static class ServiceRegistrar
         }
     }
 
-    public static void AddMediateXClasses(IServiceCollection services, MediateXServiceConfiguration configuration, CancellationToken cancellationToken = default)
+    public static void AddMediateXClasses(IServiceCollection services, ServiceConfiguration configuration, CancellationToken cancellationToken = default)
     {   
 
         var assembliesToScan = configuration.AssembliesToRegister.Distinct().ToArray();
@@ -130,7 +130,7 @@ public static class ServiceRegistrar
         IServiceCollection services,
         IEnumerable<Assembly> assembliesToScan,
         bool addIfAlreadyExists,
-        MediateXServiceConfiguration configuration,
+        ServiceConfiguration configuration,
         CancellationToken cancellationToken = default)
     {
         List<Type> concretions = [];
@@ -467,7 +467,7 @@ public static class ServiceRegistrar
         list.Add(value);
     }
 
-    public static void AddRequiredServices(IServiceCollection services, MediateXServiceConfiguration serviceConfiguration)
+    public static void AddRequiredServices(IServiceCollection services, ServiceConfiguration serviceConfiguration)
     {
         // Use TryAdd, so any existing ServiceFactory/IMediator registration doesn't get overridden
         services.TryAdd(new ServiceDescriptor(typeof(IMediator), serviceConfiguration.MediatorImplementationType, serviceConfiguration.Lifetime));
@@ -504,6 +504,30 @@ public static class ServiceRegistrar
             services.TryAddEnumerable(serviceConfiguration.RequestPostProcessorsToRegister);
         }
 
+        // Register validators
+        foreach (var serviceDescriptor in serviceConfiguration.RequestValidatorsToRegister)
+        {
+            services.TryAddEnumerable(serviceDescriptor);
+        }
+
+        // Register logging options if logging behavior is enabled
+        if (serviceConfiguration.LoggingOptions is not null)
+        {
+            services.TryAddSingleton(serviceConfiguration.LoggingOptions);
+        }
+
+        // Register retry options if retry behavior is enabled
+        if (serviceConfiguration.RetryOptions is not null)
+        {
+            services.TryAddSingleton(serviceConfiguration.RetryOptions);
+        }
+
+        // Register timeout options if timeout behavior is enabled
+        if (serviceConfiguration.TimeoutOptions is not null)
+        {
+            services.TryAddSingleton(serviceConfiguration.TimeoutOptions);
+        }
+
         foreach (var serviceDescriptor in serviceConfiguration.BehaviorsToRegister)
         {
             services.TryAddEnumerable(serviceDescriptor);
@@ -523,7 +547,7 @@ public static class ServiceRegistrar
     /// concrete request types found in the registered assemblies.
     /// This enables behaviors like IPipelineBehavior&lt;TRequest, Result&lt;T&gt;&gt; to work correctly.
     /// </summary>
-    private static void ProcessNestedGenericBehaviors(IServiceCollection services, MediateXServiceConfiguration serviceConfiguration)
+    private static void ProcessNestedGenericBehaviors(IServiceCollection services, ServiceConfiguration serviceConfiguration)
     {
         if (serviceConfiguration.NestedGenericBehaviorsToRegister.Count == 0)
             return;

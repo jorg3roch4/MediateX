@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.1.0] - 2025-12-29
+
+This release introduces powerful pipeline behaviors for cross-cutting concerns: functional error handling with `Result<T>`, automatic validation, logging, retry with exponential backoff, and timeout control.
+
+### ✨ Added
+
+*   **Result<T> Pattern:** Functional error handling without exceptions
+    *   `Result<T>` and `Result` (void) types for explicit error representation
+    *   `IResultRequest<T>` marker interface for Result-returning requests
+    *   `Error` record with `Code` and `Message` properties
+    *   Functional combinators: `Match()`, `Map()`, `Bind()`
+    *   Zero overhead compared to ~1000x slower exception throwing
+    *   42 unit tests covering all scenarios
+
+*   **ValidationBehavior:** Automatic request validation in pipeline
+    *   `IRequestValidator<TRequest>` interface for custom validators
+    *   `ValidationResult` with `IsValid`, `Errors` collection
+    *   `ValidationResultBuilder` for fluent validation rules
+    *   `ValidationException` thrown on validation failure
+    *   `ValidationResultBehavior<TRequest, TValue>` for Result<T> integration
+    *   Multiple validators per request type supported
+    *   21 unit tests
+
+*   **LoggingBehavior:** Automatic request logging with performance metrics
+    *   High-performance logging using `LoggerMessage` source generators (zero allocations)
+    *   Configurable: `LogRequestStart`, `LogRequestFinish`, `LogRequestException`
+    *   Slow request detection with configurable `SlowRequestThresholdMs`
+    *   Automatic duration tracking for all requests
+    *   8 unit tests
+
+*   **RetryBehavior:** Automatic retries with exponential backoff
+    *   Configurable `MaxRetryAttempts`, `BaseDelay`, `MaxDelay`
+    *   Exponential backoff with optional jitter (prevents thundering herd)
+    *   `ShouldRetryException` predicate for filtering transient errors
+    *   `RetryResultBehavior<TRequest, TValue>` for Result<T> integration
+    *   `ShouldRetryResultError` predicate for Result failure filtering
+    *   11 unit tests
+
+*   **TimeoutBehavior:** Request timeout enforcement
+    *   Configurable `DefaultTimeout` (default: 30 seconds)
+    *   Per-request timeout via `SetTimeout<TRequest>(TimeSpan)`
+    *   `IHasTimeout` interface for request-defined timeouts
+    *   `TimeoutResultBehavior<TRequest, TValue>` returns failure instead of throwing
+    *   10 unit tests
+
+*   **Fluent Configuration API:**
+    *   `AddValidationBehavior()` / `AddValidationResultBehavior()`
+    *   `AddRequestValidator<TValidator>()`
+    *   `AddLoggingBehavior(Action<LoggingBehaviorOptions>?)`
+    *   `AddRetryBehavior(Action<RetryBehaviorOptions>?)` / `AddRetryResultBehavior()`
+    *   `AddTimeoutBehavior(Action<TimeoutBehaviorOptions>?)` / `AddTimeoutResultBehavior()`
+
+### 📦 Dependencies
+
+*   **Added:** `Microsoft.Extensions.Logging.Abstractions` (10.0.1) for LoggingBehavior
+
+### 🧪 Tests
+
+*   **92 new tests** for v3.1.0 features (263 total tests)
+
+---
 ## [3.0.0] - 2025-12-13
 
 This release brings MediateX to .NET 10, with significant improvements to DI container compatibility, assembly scanning robustness, and project structure alignment with .NET ecosystem conventions.
