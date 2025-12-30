@@ -25,9 +25,9 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">The action used to configure the options</param>
     /// <returns>Service collection</returns>
     public static IServiceCollection AddMediateX(this IServiceCollection services,
-        Action<ServiceConfiguration> configuration)
+        Action<MediateXServiceConfiguration> configuration)
     {
-        ServiceConfiguration serviceConfig = new();
+        MediateXServiceConfiguration serviceConfig = new();
 
         configuration.Invoke(serviceConfig);
 
@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">Configuration options</param>
     /// <returns>Service collection</returns>
     public static IServiceCollection AddMediateX(this IServiceCollection services,
-        ServiceConfiguration configuration)
+        MediateXServiceConfiguration configuration)
     {
         if (!configuration.AssembliesToRegister.Any())
         {
