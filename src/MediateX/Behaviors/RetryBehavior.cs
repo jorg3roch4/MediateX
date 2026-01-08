@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using MediateX.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;

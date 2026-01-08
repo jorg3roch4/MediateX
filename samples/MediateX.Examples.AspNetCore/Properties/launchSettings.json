@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "MediateX.Examples.AspNetCore": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:60223;http://localhost:60224"
+    }
+  }
+}

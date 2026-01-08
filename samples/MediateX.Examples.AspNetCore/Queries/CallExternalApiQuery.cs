@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using MediateX.Contracts;
 
 namespace MediateX.Examples.AspNetCore;
 

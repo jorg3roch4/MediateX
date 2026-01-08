@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.1.1] - 2025-01-08
+
+### 🔄 Changed
+
+*   **Namespace Change:** Moved Result types to `MediateX.Contracts` sub-namespace
+    *   `Result<T>`, `Result`, `Error`, `ResultExtensions` moved from `MediateX` to `MediateX.Contracts`
+    *   `IResultRequest<T>` and `IResultRequest` moved from `MediateX` to `MediateX.Contracts`
+    *   Prevents naming conflicts with user-defined `Result<T>` types (very common pattern)
+    *   Users who don't use MediateX Result types see no change
+
+### 📦 Migration
+
+To use MediateX Result types, add the following using statement:
+
+```csharp
+using MediateX.Contracts;
+```
+
+---
 ## [3.1.0] - 2025-12-29
 
 This release introduces powerful pipeline behaviors for cross-cutting concerns: functional error handling with `Result<T>`, automatic validation, logging, retry with exponential backoff, and timeout control.

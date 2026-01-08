@@ -666,7 +666,7 @@ public class MediateXServiceConfiguration
 
     /// <summary>
     /// Adds the <see cref="RetryResultBehavior{TRequest, TValue}"/> to the pipeline.
-    /// Retries requests returning <see cref="Result{T}"/> on transient failures.
+    /// Retries requests returning <see cref="MediateX.Contracts.Result{T}"/> on transient failures.
     /// </summary>
     /// <param name="configureOptions">Optional action to configure retry options.</param>
     /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
@@ -707,7 +707,7 @@ public class MediateXServiceConfiguration
 
     /// <summary>
     /// Adds the <see cref="TimeoutResultBehavior{TRequest, TValue}"/> to the pipeline.
-    /// Enforces a timeout and returns <see cref="Result{T}"/> failure on timeout instead of throwing.
+    /// Enforces a timeout and returns <see cref="MediateX.Contracts.Result{T}"/> failure on timeout instead of throwing.
     /// </summary>
     /// <param name="configureOptions">Optional action to configure timeout options.</param>
     /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
@@ -737,11 +737,11 @@ public class MediateXServiceConfiguration
 
     /// <summary>
     /// Adds the <see cref="ValidationResultBehavior{TRequest,TValue}"/> to the pipeline.
-    /// This behavior returns a failed <see cref="Result{T}"/> instead of throwing exceptions.
-    /// Use this for handlers that return <see cref="Result{T}"/>.
+    /// This behavior returns a failed <see cref="MediateX.Contracts.Result{T}"/> instead of throwing exceptions.
+    /// Use this for handlers that return <see cref="MediateX.Contracts.Result{T}"/>.
     /// </summary>
     /// <remarks>
-    /// For handlers returning non-generic <see cref="Result"/>, register
+    /// For handlers returning non-generic <see cref="MediateX.Contracts.Result"/>, register
     /// <see cref="ValidationResultVoidBehavior{TRequest}"/> manually for each request type.
     /// </remarks>
     /// <param name="serviceLifetime">The service lifetime for the behavior.</param>

@@ -1,4 +1,6 @@
-namespace MediateX;
+using MediateX;
+
+namespace MediateX.Contracts;
 
 /// <summary>
 /// Marker interface for requests that return a <see cref="Result{T}"/>.

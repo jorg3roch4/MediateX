@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MediateX;
+namespace MediateX.Contracts;
 
 /// <summary>
 /// Represents the result of an operation that can succeed or fail.

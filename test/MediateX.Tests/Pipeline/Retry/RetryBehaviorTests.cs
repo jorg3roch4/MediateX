@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediateX;
 using MediateX.Behaviors;
+using MediateX.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;

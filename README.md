@@ -23,7 +23,7 @@ A GitHub star helps too.
 | Category | What You Get |
 |----------|--------------|
 | **Core** | Request/Response, Notifications, Streaming (`IAsyncEnumerable`), Dynamic Dispatch |
-| **Result&lt;T&gt;** | Functional error handling with `Map`, `Bind`, `Match` - no exceptions needed |
+| **Result&lt;T&gt;** | Functional error handling with `Map`, `Bind`, `Match` - in `MediateX.Contracts` namespace |
 | **Validation** | Built-in validators with fluent API - no FluentValidation dependency |
 | **Behaviors** | Logging, Retry (exponential backoff + jitter), Timeout, Validation - ready to use |
 | **Exception Handling** | Hierarchical handlers by exception type with recovery options |
@@ -48,7 +48,9 @@ builder.Services.AddMediateX(cfg =>
     cfg.AddValidationBehavior();
 });
 
-// 2. Define request
+// 2. Define request (Result<T> is in MediateX.Contracts namespace)
+using MediateX.Contracts;
+
 public record GetUserQuery(int Id) : IRequest<Result<User>>;
 
 // 3. Handle it
@@ -78,6 +80,8 @@ return result.Match(
 ### Result&lt;T&gt; - Railroad Oriented Programming
 
 ```csharp
+using MediateX.Contracts; // Result<T>, Error, ResultExtensions
+
 // Chain operations without try/catch
 var result = await GetUser(id)
     .Bind(user => ValidateUser(user))

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediateX;
 using MediateX.Behaviors;
+using MediateX.Contracts;
 using MediateX.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

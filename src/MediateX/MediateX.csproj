@@ -10,9 +10,9 @@
 
     <!-- Package Identity -->
     <PackageId>MediateX</PackageId>
-    <Version>3.1.0</Version>
-    <AssemblyVersion>3.1.0</AssemblyVersion>
-    <FileVersion>3.1.0</FileVersion>
+    <Version>3.1.1</Version>
+    <AssemblyVersion>3.1.1</AssemblyVersion>
+    <FileVersion>3.1.1</FileVersion>
     <Product>MediateX</Product>
 
     <!-- Package Metadata -->
@@ -25,7 +25,7 @@
     <PackageIcon>icon-128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageReleaseNotes>v3.1.0 - Result&lt;T&gt; pattern, ValidationBehavior, LoggingBehavior, RetryBehavior, TimeoutBehavior. v3.0.0 - .NET 10 upgrade, improved DI container compatibility.</PackageReleaseNotes>
+    <PackageReleaseNotes>v3.1.1 - Moved Result types to MediateX.Contracts namespace to avoid conflicts with user-defined Result types. v3.1.0 - Result&lt;T&gt; pattern, ValidationBehavior, LoggingBehavior, RetryBehavior, TimeoutBehavior. v3.0.0 - .NET 10 upgrade, improved DI container compatibility.</PackageReleaseNotes>
     <NeutralLanguage>en</NeutralLanguage>
     <MinClientVersion>6.0</MinClientVersion>
 

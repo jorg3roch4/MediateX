@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediateX.Behaviors;
+using MediateX.Contracts;
 
 namespace MediateX.Examples.AspNetCore;
 

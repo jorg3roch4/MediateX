@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MediateX.Contracts;
 using Xunit;
 
 namespace MediateX.Tests.Contracts;
