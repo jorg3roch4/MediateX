@@ -10,6 +10,16 @@ In-process messaging done right. Request/response, notifications, and streaming 
 
 ---
 
+## Support
+
+If MediateX helps your projects, consider supporting its development:
+
+[![GitHub stars](https://img.shields.io/github/stars/jorg3roch4/MediateX?style=social)](https://github.com/jorg3roch4/MediateX)
+[![PayPal](https://img.shields.io/badge/PayPal-Donate-00457C?style=flat-square&logo=paypal&logoColor=white)](https://paypal.me/jorg3roch4)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=flat-square&logo=ko-fi&logoColor=white)](https://ko-fi.com/jorg3roch4)
+
+---
+
 ## Install
 
 ```bash
