@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,8 +7,6 @@ using MediateX.Internal;
 using MediateX.Registration;
 using MediateX.Publishing;
 using MediateX.Processing;
-using MediateX.Validation;
-using MediateX.Behaviors;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -18,7 +16,7 @@ public class MediateXServiceConfiguration
     /// Optional filter for types to register. Default value is a function returning true.
     /// </summary>
     public Func<Type, bool> TypeEvaluator { get; set; } = t => true;
-    
+
     /// <summary>
     /// Mediator implementation type to register. Default is <see cref="Mediator"/>
     /// </summary>
@@ -66,11 +64,6 @@ public class MediateXServiceConfiguration
     /// List of request post processors to register in specific order
     /// </summary>
     public List<ServiceDescriptor> RequestPostProcessorsToRegister { get; } = new();
-
-    /// <summary>
-    /// List of request validators to register
-    /// </summary>
-    public List<ServiceDescriptor> RequestValidatorsToRegister { get; } = new();
 
     /// <summary>
     /// List of open behaviors with nested generics that need to be closed against concrete request types.
@@ -209,8 +202,7 @@ public class MediateXServiceConfiguration
 
     /// <summary>
     /// Registers an open behavior type against the <see cref="IPipelineBehavior{TRequest,TResponse}"/> open generic interface type.
-    /// Behaviors with nested generics in the response type (e.g., IPipelineBehavior&lt;TRequest, Result&lt;T&gt;&gt;)
-    /// are automatically detected and closed against concrete request types during registration.
+    /// Behaviors with nested generics in the response type are automatically detected and closed against concrete request types during registration.
     /// </summary>
     /// <param name="openBehaviorType">An open generic behavior type</param>
     /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
@@ -278,7 +270,7 @@ public class MediateXServiceConfiguration
 
         return this;
     }
-    
+
     /// <summary>
     /// Register a closed stream behavior type
     /// </summary>
@@ -288,7 +280,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddStreamBehavior<TServiceType, TImplementationType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddStreamBehavior(typeof(TServiceType), typeof(TImplementationType), serviceLifetime);
-    
+
     /// <summary>
     /// Register a closed stream behavior type
     /// </summary>
@@ -302,7 +294,7 @@ public class MediateXServiceConfiguration
 
         return this;
     }
-    
+
     /// <summary>
     /// Register a closed stream behavior type against all <see cref="IStreamPipelineBehavior{TRequest,TResponse}"/> implementations
     /// </summary>
@@ -311,7 +303,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddStreamBehavior<TImplementationType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddStreamBehavior(typeof(TImplementationType), serviceLifetime);
-    
+
     /// <summary>
     /// Register a closed stream behavior type against all <see cref="IStreamPipelineBehavior{TRequest,TResponse}"/> implementations
     /// </summary>
@@ -334,7 +326,7 @@ public class MediateXServiceConfiguration
 
         return this;
     }
-    
+
     /// <summary>
     /// Registers an open stream behavior type against the <see cref="IStreamPipelineBehavior{TRequest,TResponse}"/> open generic interface type
     /// </summary>
@@ -373,7 +365,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddRequestPreProcessor<TServiceType, TImplementationType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddRequestPreProcessor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime);
-    
+
     /// <summary>
     /// Register a closed request pre processor type
     /// </summary>
@@ -417,10 +409,10 @@ public class MediateXServiceConfiguration
         {
             RequestPreProcessorsToRegister.Add(new(implementedPreProcessorType, implementationType, serviceLifetime));
         }
-        
+
         return this;
     }
-    
+
     /// <summary>
     /// Registers an open request pre processor type against the <see cref="IRequestPreProcessor{TRequest}"/> open generic interface type
     /// </summary>
@@ -449,7 +441,7 @@ public class MediateXServiceConfiguration
 
         return this;
     }
-    
+
     /// <summary>
     /// Register a closed request post processor type
     /// </summary>
@@ -459,7 +451,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddRequestPostProcessor<TServiceType, TImplementationType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddRequestPostProcessor(typeof(TServiceType), typeof(TImplementationType), serviceLifetime);
-    
+
     /// <summary>
     /// Register a closed request post processor type
     /// </summary>
@@ -473,7 +465,7 @@ public class MediateXServiceConfiguration
 
         return this;
     }
- 
+
     /// <summary>
     /// Register a closed request post processor type against all <see cref="IRequestPostProcessor{TRequest,TResponse}"/> implementations
     /// </summary>
@@ -482,7 +474,7 @@ public class MediateXServiceConfiguration
     /// <returns>This</returns>
     public MediateXServiceConfiguration AddRequestPostProcessor<TImplementationType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddRequestPostProcessor(typeof(TImplementationType), serviceLifetime);
-    
+
     /// <summary>
     /// Register a closed request post processor type against all <see cref="IRequestPostProcessor{TRequest,TResponse}"/> implementations
     /// </summary>
@@ -504,7 +496,7 @@ public class MediateXServiceConfiguration
         }
         return this;
     }
-    
+
     /// <summary>
     /// Registers an open request post processor type against the <see cref="IRequestPostProcessor{TRequest,TResponse}"/> open generic interface type
     /// </summary>
@@ -531,224 +523,6 @@ public class MediateXServiceConfiguration
             RequestPostProcessorsToRegister.Add(new(openBehaviorInterface, openBehaviorType, serviceLifetime));
         }
 
-        return this;
-    }
-
-    /// <summary>
-    /// Register a closed request validator type
-    /// </summary>
-    /// <typeparam name="TServiceType">Closed request validator interface type</typeparam>
-    /// <typeparam name="TImplementationType">Closed request validator implementation type</typeparam>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This</returns>
-    public MediateXServiceConfiguration AddRequestValidator<TServiceType, TImplementationType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-        => AddRequestValidator(typeof(TServiceType), typeof(TImplementationType), serviceLifetime);
-
-    /// <summary>
-    /// Register a closed request validator type
-    /// </summary>
-    /// <param name="serviceType">Closed request validator interface type</param>
-    /// <param name="implementationType">Closed request validator implementation type</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This</returns>
-    public MediateXServiceConfiguration AddRequestValidator(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        RequestValidatorsToRegister.Add(new(serviceType, implementationType, serviceLifetime));
-        return this;
-    }
-
-    /// <summary>
-    /// Register a closed request validator type against all <see cref="IRequestValidator{TRequest}"/> implementations
-    /// </summary>
-    /// <typeparam name="TImplementationType">Closed request validator implementation type</typeparam>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This</returns>
-    public MediateXServiceConfiguration AddRequestValidator<TImplementationType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-        => AddRequestValidator(typeof(TImplementationType), serviceLifetime);
-
-    /// <summary>
-    /// Register a closed request validator type against all <see cref="IRequestValidator{TRequest}"/> implementations
-    /// </summary>
-    /// <param name="implementationType">Closed request validator implementation type</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This</returns>
-    public MediateXServiceConfiguration AddRequestValidator(Type implementationType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        var implementedGenericInterfaces = implementationType.FindInterfacesThatClose(typeof(IRequestValidator<>)).ToList();
-
-        if (implementedGenericInterfaces.Count == 0)
-        {
-            throw new InvalidOperationException($"{implementationType.Name} must implement {typeof(IRequestValidator<>).FullName}");
-        }
-
-        foreach (var implementedValidatorType in implementedGenericInterfaces)
-        {
-            RequestValidatorsToRegister.Add(new(implementedValidatorType, implementationType, serviceLifetime));
-        }
-
-        return this;
-    }
-
-    /// <summary>
-    /// Registers an open request validator type against the <see cref="IRequestValidator{TRequest}"/> open generic interface type
-    /// </summary>
-    /// <param name="openValidatorType">An open generic request validator type</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This</returns>
-    public MediateXServiceConfiguration AddOpenRequestValidator(Type openValidatorType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        if (!openValidatorType.IsGenericType)
-        {
-            throw new InvalidOperationException($"{openValidatorType.Name} must be generic");
-        }
-
-        var implementedGenericInterfaces = openValidatorType.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
-        HashSet<Type> implementedOpenValidatorInterfaces = [.. implementedGenericInterfaces.Where(i => i == typeof(IRequestValidator<>))];
-
-        if (implementedOpenValidatorInterfaces.Count == 0)
-        {
-            throw new InvalidOperationException($"{openValidatorType.Name} must implement {typeof(IRequestValidator<>).FullName}");
-        }
-
-        foreach (var openValidatorInterface in implementedOpenValidatorInterfaces)
-        {
-            RequestValidatorsToRegister.Add(new(openValidatorInterface, openValidatorType, serviceLifetime));
-        }
-
-        return this;
-    }
-
-    /// <summary>
-    /// Gets the <see cref="LoggingBehaviorOptions"/> to configure, or null if logging is not enabled.
-    /// </summary>
-    internal LoggingBehaviorOptions? LoggingOptions { get; private set; }
-
-    /// <summary>
-    /// Adds the <see cref="LoggingBehavior{TRequest, TResponse}"/> to the pipeline.
-    /// Logs request start, completion with duration, and failures.
-    /// </summary>
-    /// <param name="configureOptions">Optional action to configure logging options.</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This configuration instance for chaining.</returns>
-    public MediateXServiceConfiguration AddLoggingBehavior(
-        Action<LoggingBehaviorOptions>? configureOptions = null,
-        ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        LoggingOptions = new LoggingBehaviorOptions();
-        configureOptions?.Invoke(LoggingOptions);
-
-        AddOpenBehavior(typeof(LoggingBehavior<,>), serviceLifetime);
-        return this;
-    }
-
-    /// <summary>
-    /// Gets the <see cref="RetryBehaviorOptions"/> to configure, or null if retry is not enabled.
-    /// </summary>
-    internal RetryBehaviorOptions? RetryOptions { get; private set; }
-
-    /// <summary>
-    /// Adds the <see cref="RetryBehavior{TRequest, TResponse}"/> to the pipeline.
-    /// Retries failed requests with configurable retry logic and exponential backoff.
-    /// </summary>
-    /// <param name="configureOptions">Optional action to configure retry options.</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This configuration instance for chaining.</returns>
-    public MediateXServiceConfiguration AddRetryBehavior(
-        Action<RetryBehaviorOptions>? configureOptions = null,
-        ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        RetryOptions = new RetryBehaviorOptions();
-        configureOptions?.Invoke(RetryOptions);
-
-        AddOpenBehavior(typeof(RetryBehavior<,>), serviceLifetime);
-        return this;
-    }
-
-    /// <summary>
-    /// Adds the <see cref="RetryResultBehavior{TRequest, TValue}"/> to the pipeline.
-    /// Retries requests returning <see cref="MediateX.Contracts.Result{T}"/> on transient failures.
-    /// </summary>
-    /// <param name="configureOptions">Optional action to configure retry options.</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This configuration instance for chaining.</returns>
-    public MediateXServiceConfiguration AddRetryResultBehavior(
-        Action<RetryBehaviorOptions>? configureOptions = null,
-        ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        RetryOptions ??= new RetryBehaviorOptions();
-        configureOptions?.Invoke(RetryOptions);
-
-        NestedGenericBehaviorsToRegister.Add((typeof(RetryResultBehavior<,>), serviceLifetime));
-        return this;
-    }
-
-    /// <summary>
-    /// Gets the <see cref="TimeoutBehaviorOptions"/> to configure, or null if timeout is not enabled.
-    /// </summary>
-    internal TimeoutBehaviorOptions? TimeoutOptions { get; private set; }
-
-    /// <summary>
-    /// Adds the <see cref="TimeoutBehavior{TRequest, TResponse}"/> to the pipeline.
-    /// Enforces a timeout on request execution and throws <see cref="TimeoutException"/> on timeout.
-    /// </summary>
-    /// <param name="configureOptions">Optional action to configure timeout options.</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This configuration instance for chaining.</returns>
-    public MediateXServiceConfiguration AddTimeoutBehavior(
-        Action<TimeoutBehaviorOptions>? configureOptions = null,
-        ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        TimeoutOptions = new TimeoutBehaviorOptions();
-        configureOptions?.Invoke(TimeoutOptions);
-
-        AddOpenBehavior(typeof(TimeoutBehavior<,>), serviceLifetime);
-        return this;
-    }
-
-    /// <summary>
-    /// Adds the <see cref="TimeoutResultBehavior{TRequest, TValue}"/> to the pipeline.
-    /// Enforces a timeout and returns <see cref="MediateX.Contracts.Result{T}"/> failure on timeout instead of throwing.
-    /// </summary>
-    /// <param name="configureOptions">Optional action to configure timeout options.</param>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This configuration instance for chaining.</returns>
-    public MediateXServiceConfiguration AddTimeoutResultBehavior(
-        Action<TimeoutBehaviorOptions>? configureOptions = null,
-        ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        TimeoutOptions ??= new TimeoutBehaviorOptions();
-        configureOptions?.Invoke(TimeoutOptions);
-
-        NestedGenericBehaviorsToRegister.Add((typeof(TimeoutResultBehavior<,>), serviceLifetime));
-        return this;
-    }
-
-    /// <summary>
-    /// Adds the <see cref="ValidationBehavior{TRequest, TResponse}"/> to the pipeline.
-    /// This behavior throws <see cref="ValidationException"/> when validation fails.
-    /// </summary>
-    /// <param name="serviceLifetime">Optional service lifetime, defaults to <see cref="ServiceLifetime.Transient"/>.</param>
-    /// <returns>This</returns>
-    public MediateXServiceConfiguration AddValidationBehavior(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        AddOpenBehavior(typeof(ValidationBehavior<,>), serviceLifetime);
-        return this;
-    }
-
-    /// <summary>
-    /// Adds the <see cref="ValidationResultBehavior{TRequest,TValue}"/> to the pipeline.
-    /// This behavior returns a failed <see cref="MediateX.Contracts.Result{T}"/> instead of throwing exceptions.
-    /// Use this for handlers that return <see cref="MediateX.Contracts.Result{T}"/>.
-    /// </summary>
-    /// <remarks>
-    /// For handlers returning non-generic <see cref="MediateX.Contracts.Result"/>, register
-    /// <see cref="ValidationResultVoidBehavior{TRequest}"/> manually for each request type.
-    /// </remarks>
-    /// <param name="serviceLifetime">The service lifetime for the behavior.</param>
-    /// <returns>This configuration instance for chaining.</returns>
-    public MediateXServiceConfiguration AddValidationResultBehavior(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-    {
-        NestedGenericBehaviorsToRegister.Add((typeof(ValidationResultBehavior<,>), serviceLifetime));
         return this;
     }
 }

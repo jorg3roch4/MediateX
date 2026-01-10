@@ -1,13 +1,8 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using MediateX.Contracts;
-
 namespace MediateX.Examples.AspNetCore;
 
-public record GetUserQuery(int Id) : IResultRequest<User>;
+public record GetUserQuery(int Id) : IRequest<User?>;
 
-public class GetUserHandler : IRequestHandler<GetUserQuery, Result<User>>
+public class GetUserHandler : IRequestHandler<GetUserQuery, User?>
 {
     // Simulated database
     private static readonly Dictionary<int, User> _users = new()
@@ -17,14 +12,9 @@ public class GetUserHandler : IRequestHandler<GetUserQuery, Result<User>>
         [3] = new User(3, "Charlie", "charlie@example.com")
     };
 
-    public Task<Result<User>> Handle(GetUserQuery query, CancellationToken ct)
+    public Task<User?> Handle(GetUserQuery query, CancellationToken ct)
     {
-        if (_users.TryGetValue(query.Id, out var user))
-        {
-            return Task.FromResult(Result<User>.Success(user));
-        }
-
-        return Task.FromResult(
-            Result<User>.Failure("NotFound", $"User with ID {query.Id} not found"));
+        _users.TryGetValue(query.Id, out var user);
+        return Task.FromResult(user);
     }
 }

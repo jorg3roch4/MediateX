@@ -504,30 +504,6 @@ public static class ServiceRegistrar
             services.TryAddEnumerable(serviceConfiguration.RequestPostProcessorsToRegister);
         }
 
-        // Register validators
-        foreach (var serviceDescriptor in serviceConfiguration.RequestValidatorsToRegister)
-        {
-            services.TryAddEnumerable(serviceDescriptor);
-        }
-
-        // Register logging options if logging behavior is enabled
-        if (serviceConfiguration.LoggingOptions is not null)
-        {
-            services.TryAddSingleton(serviceConfiguration.LoggingOptions);
-        }
-
-        // Register retry options if retry behavior is enabled
-        if (serviceConfiguration.RetryOptions is not null)
-        {
-            services.TryAddSingleton(serviceConfiguration.RetryOptions);
-        }
-
-        // Register timeout options if timeout behavior is enabled
-        if (serviceConfiguration.TimeoutOptions is not null)
-        {
-            services.TryAddSingleton(serviceConfiguration.TimeoutOptions);
-        }
-
         foreach (var serviceDescriptor in serviceConfiguration.BehaviorsToRegister)
         {
             services.TryAddEnumerable(serviceDescriptor);

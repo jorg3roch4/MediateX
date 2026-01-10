@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.2.0] - 2026-01-09
+
+### A Pure Mediator
+
+MediateX is now a **pure mediator**. We removed all cross-cutting concern behaviors that don't belong in a mediator library.
+
+**Philosophy:** A mediator should do one thing well - route messages. Validation belongs in FluentValidation. Resilience belongs in Polly. Logging belongs in your logging framework. MediateX now stays focused on what it does best.
+
+### ⚠️ Breaking Changes
+
+| Removed | Use Instead |
+|---------|-------------|
+| `Result<T>`, `Error`, `IResultRequest<T>` | [FluentResults](https://github.com/altmann/FluentResults), [ErrorOr](https://github.com/amantinband/error-or) |
+| `ValidationBehavior`, `IRequestValidator` | [FluentValidation](https://fluentvalidation.net/) |
+| `LoggingBehavior` | Your own `IPipelineBehavior<,>` |
+| `RetryBehavior`, `TimeoutBehavior` | [Polly](https://github.com/App-vNext/Polly) |
+| `Microsoft.Extensions.Logging.Abstractions` dependency | No longer required |
+
+### 📊 Impact
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Lines of code | 4,438 | 2,713 |
+| Reduction | - | **-39%** |
+| Dependencies | 2 | 1 |
+| Tests | 263 | 168 |
+
+### 📦 Migration
+
+```csharp
+// Before (v3.1.x)
+services.AddMediateX(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<Program>();
+    cfg.AddValidationBehavior();
+    cfg.AddLoggingBehavior();
+    cfg.AddRetryBehavior();
+});
+
+// After (v3.2.0)
+services.AddMediateX(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<Program>();
+});
+
+// Add your preferred libraries separately:
+// - FluentValidation for validation
+// - Polly for retry/timeout
+// - Your own IPipelineBehavior<,> for logging
+```
+
+---
 ## [3.1.1] - 2025-01-08
 
 ### 🔄 Changed

@@ -1,93 +1,66 @@
 using MediateX;
-using MediateX.Behaviors;
-using MediateX.Validation;
 using MediateX.Examples.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure MediateX with v3.1.0 pipeline behaviors
+// Configure MediateX
 builder.Services.AddMediateX(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
-
-    // Recommended pipeline order: timeout -> retry -> logging -> validation
-    // Use *ResultBehavior variants for IResultRequest<T> types
-    cfg.AddTimeoutResultBehavior(opt => opt.DefaultTimeout = TimeSpan.FromSeconds(30));
-    cfg.AddRetryResultBehavior(opt =>
-    {
-        opt.MaxRetryAttempts = 3;
-        opt.UseExponentialBackoff = true;
-        opt.BaseDelay = TimeSpan.FromMilliseconds(200);
-        opt.ShouldRetryResultError = error => error.Code == "ConnectionError";
-    });
-    cfg.AddLoggingBehavior(opt => opt.SlowRequestThresholdMs = 500);
-    cfg.AddValidationResultBehavior();
-
-    // Register validators
-    cfg.AddRequestValidator<CreateUserValidator>();
 });
 
 var app = builder.Build();
 
-// ========== User Endpoints (Result<T> + Validation) ==========
+// ========== User Endpoints ==========
 
 app.MapPost("/users", async (CreateUserCommand cmd, IMediator mediator) =>
 {
-    var result = await mediator.Send(cmd);
-    return result.Match(
-        onSuccess: user => Results.Created($"/users/{user.Id}", user),
-        onFailure: error => error.Code == "Validation"
-            ? Results.BadRequest(new { error.Code, error.Message })
-            : Results.Conflict(new { error.Code, error.Message })
-    );
+    try
+    {
+        var user = await mediator.Send(cmd);
+        return Results.Created($"/users/{user.Id}", user);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.Conflict(new { message = ex.Message });
+    }
 });
 
 app.MapGet("/users/{id:int}", async (int id, IMediator mediator) =>
 {
-    var result = await mediator.Send(new GetUserQuery(id));
-    return result.Match(
-        onSuccess: user => Results.Ok(user),
-        onFailure: error => error.Code == "NotFound"
-            ? Results.NotFound(new { error.Message })
-            : Results.BadRequest(new { error.Message })
-    );
+    var user = await mediator.Send(new GetUserQuery(id));
+    return user is not null
+        ? Results.Ok(user)
+        : Results.NotFound(new { message = $"User with ID {id} not found" });
 });
 
-// ========== External API Endpoint (Retry Demo) ==========
+// ========== Ping Endpoint ==========
 
-app.MapGet("/external-api", async (IMediator mediator) =>
+app.MapGet("/ping", async (IMediator mediator) =>
 {
-    var result = await mediator.Send(new CallExternalApiQuery());
-    return result.Match(
-        onSuccess: data => Results.Ok(new { data }),
-        onFailure: error => Results.StatusCode(503)
-    );
+    var response = await mediator.Send(new PingQuery("Hello"));
+    return Results.Ok(new { response });
 });
 
-// ========== Slow Report Endpoint (Timeout Demo) ==========
+// ========== Notification Endpoint ==========
 
-app.MapGet("/slow-report", async (int? delayMs, IMediator mediator) =>
+app.MapPost("/users/{id:int}/notify", async (int id, IMediator mediator) =>
 {
-    var result = await mediator.Send(new GenerateSlowReportQuery(delayMs ?? 2000));
-    return result.Match(
-        onSuccess: report => Results.Ok(new { report }),
-        onFailure: error => error.Code == "Timeout"
-            ? Results.StatusCode(504)
-            : Results.BadRequest(new { error.Message })
-    );
+    await mediator.Publish(new UserNotification(id, "Profile updated"));
+    return Results.Ok(new { message = "Notification sent" });
 });
 
 // ========== Info Endpoint ==========
 
 app.MapGet("/", () => Results.Ok(new
 {
-    name = "MediateX v3.1.0 Examples",
+    name = "MediateX v3.2.0 Examples",
     endpoints = new[]
     {
-        "POST /users - Create user (validation + Result<T>)",
-        "GET /users/{id} - Get user (Result<T>)",
-        "GET /external-api - Call external API (retry demo)",
-        "GET /slow-report?delayMs=2000 - Generate report (timeout demo)"
+        "POST /users - Create user",
+        "GET /users/{id} - Get user by ID",
+        "GET /ping - Ping/Pong example",
+        "POST /users/{id}/notify - Send notification"
     }
 }));
 

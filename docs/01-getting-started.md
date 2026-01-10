@@ -1,5 +1,7 @@
 # Getting Started
 
+MediateX is a **pure mediator** for .NET 10+. It handles in-process messaging - request/response, notifications, and streaming - without bundling validation, logging, or resilience features. Use the libraries you prefer for those concerns.
+
 This guide covers installation, basic setup, and your first request/response.
 
 ---

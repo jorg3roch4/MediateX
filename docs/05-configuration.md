@@ -485,60 +485,6 @@ These limits prevent excessive registration times:
 
 ---
 
-## Built-in Behaviors Configuration (v3.1.0+)
-
-MediateX includes ready-to-use behaviors. The `Result<T>` types they use are in `MediateX.Contracts` namespace.
-
-### Logging
-
-```csharp
-cfg.AddLoggingBehavior(); // Use defaults
-cfg.AddLoggingBehavior(opt =>
-{
-    opt.LogRequestStart = true;
-    opt.LogRequestFinish = true;
-    opt.LogRequestException = true;
-    opt.SlowRequestThresholdMs = 500;
-});
-```
-
-### Validation
-
-```csharp
-cfg.AddValidationBehavior();       // Throws ValidationException
-cfg.AddValidationResultBehavior(); // Returns Result<T>.Failure
-cfg.AddRequestValidator<MyValidator>(); // Register specific validator
-```
-
-### Retry
-
-```csharp
-cfg.AddRetryBehavior();       // Retries on exception
-cfg.AddRetryResultBehavior(); // Retries on Result<T>.Failure
-cfg.AddRetryBehavior(opt =>
-{
-    opt.MaxRetryAttempts = 3;
-    opt.BaseDelay = TimeSpan.FromMilliseconds(100);
-    opt.MaxDelay = TimeSpan.FromSeconds(10);
-    opt.UseJitter = true;
-    opt.ShouldRetryException = ex => ex is HttpRequestException;
-});
-```
-
-### Timeout
-
-```csharp
-cfg.AddTimeoutBehavior();       // Throws TimeoutException
-cfg.AddTimeoutResultBehavior(); // Returns Result<T>.Failure
-cfg.AddTimeoutBehavior(opt =>
-{
-    opt.DefaultTimeout = TimeSpan.FromSeconds(30);
-    opt.SetTimeout<SlowQuery>(TimeSpan.FromMinutes(2));
-});
-```
-
----
-
 ## Complete Configuration Example
 
 A comprehensive configuration with common patterns:
@@ -570,14 +516,9 @@ builder.Services.AddMediateX(cfg =>
     cfg.RequestExceptionActionProcessorStrategy =
         RequestExceptionActionProcessorStrategy.ApplyForUnhandledExceptions;
 
-    // Built-in behaviors (v3.1.0+)
-    cfg.AddLoggingBehavior(opt => opt.SlowRequestThresholdMs = 500);
-    cfg.AddValidationBehavior();
-    cfg.AddRetryBehavior(opt => opt.MaxRetryAttempts = 3);
-    cfg.AddTimeoutBehavior(opt => opt.DefaultTimeout = TimeSpan.FromSeconds(30));
-
     // Custom pipeline behaviors (outer to inner)
-    cfg.AddOpenBehavior(typeof(CachingBehavior<,>), ServiceLifetime.Scoped);
+    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
     cfg.AddOpenBehavior(typeof(TransactionBehavior<,>), ServiceLifetime.Scoped);
 
     // Stream behaviors
