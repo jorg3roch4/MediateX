@@ -16,7 +16,6 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/MediateX/MediateX.csproj" />
-    <Project Path="src/MediateX.SourceGenerator/MediateX.SourceGenerator.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/MediateX.Tests/MediateX.Tests.csproj" />
@@ -28,6 +27,5 @@
     <Project Path="samples/MediateX.Examples.Autofac/MediateX.Examples.Autofac.csproj" />
     <Project Path="samples/MediateX.Examples.PublishStrategies/MediateX.Examples.PublishStrategies.csproj" />
     <Project Path="samples/MediateX.Examples.Stashbox/MediateX.Examples.Stashbox.csproj" />
-    <Project Path="samples/MediateX.Examples.SourceGenerator/MediateX.Examples.SourceGenerator.csproj" />
   </Folder>
 </Solution>

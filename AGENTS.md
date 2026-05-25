@@ -8,7 +8,6 @@ Pure mediator library for .NET 10+. In-process messaging with request/response, 
 
 ### Source packages (src/)
 - **MediateX** — Core mediator: contracts, handlers, pipeline behaviors, publishing, DI registration
-- **MediateX.SourceGenerator** — Roslyn source generator for compile-time handler registration
 
 ### Tests (test/)
 - MediateX.Tests — 168 unit tests covering all messaging patterns
@@ -20,7 +19,6 @@ Pure mediator library for .NET 10+. In-process messaging with request/response, 
 - MediateX.Examples.Autofac — Autofac DI container
 - MediateX.Examples.PublishStrategies — Custom notification publish strategies
 - MediateX.Examples.Stashbox — Stashbox DI container
-- MediateX.Examples.SourceGenerator — Source generator usage
 
 ## Source Structure (src/MediateX/)
 

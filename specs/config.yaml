@@ -6,7 +6,7 @@ description: |
 
 context: |
   Stack: .NET 10 / C# 14, single dependency
-  Architecture: NuGet library + Source Generator
+  Architecture: NuGet library
   Testing: xUnit
   Style: TreatWarningsAsErrors
 
