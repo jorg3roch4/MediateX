@@ -6,7 +6,6 @@ using MediateX;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace MediateX.Tests.Publishing;
 
@@ -46,10 +45,10 @@ public class NotificationPublisherTests
         var timer = new Stopwatch();
         timer.Start();
 
-        await mediator.Publish(new Notification());
+        await mediator.Publish(new Notification(), TestContext.Current.CancellationToken);
 
         timer.Stop();
-        
+
         var sequentialElapsed = timer.ElapsedMilliseconds;
 
         services = new ServiceCollection();
@@ -64,10 +63,10 @@ public class NotificationPublisherTests
 
         timer.Restart();
 
-        await mediator.Publish(new Notification());
+        await mediator.Publish(new Notification(), TestContext.Current.CancellationToken);
 
         timer.Stop();
-        
+
         var parallelElapsed = timer.ElapsedMilliseconds;
 
         sequentialElapsed.ShouldBeGreaterThan(parallelElapsed);

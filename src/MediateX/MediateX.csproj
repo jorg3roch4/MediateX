@@ -10,9 +10,9 @@
 
     <!-- Package Identity -->
     <PackageId>MediateX</PackageId>
-    <Version>3.2.0</Version>
-    <AssemblyVersion>3.2.0</AssemblyVersion>
-    <FileVersion>3.2.0</FileVersion>
+    <Version>3.3.0</Version>
+    <AssemblyVersion>3.3.0</AssemblyVersion>
+    <FileVersion>3.3.0</FileVersion>
     <Product>MediateX</Product>
 
     <!-- Package Metadata -->
@@ -24,25 +24,24 @@
     <PackageProjectUrl>https://github.com/jorg3roch4/MediateX</PackageProjectUrl>
     <PackageIcon>icon-128x128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageReleaseNotes>v3.2.0 - BREAKING: Removed Result&lt;T&gt;, ValidationBehavior, LoggingBehavior, RetryBehavior, TimeoutBehavior. MediateX is now a pure mediator focused on core functionality. v3.0.0 - .NET 10 upgrade, improved DI container compatibility.</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReleaseNotes>v3.3.0 - New ISyncRequestHandler&lt;,&gt; and ISyncNotificationHandler&lt;&gt; interfaces with ValueTask for optimized sync paths. Zero-allocation for cache hits. ISyncRequestHandler has priority over IRequestHandler when both are registered.</PackageReleaseNotes>
     <NeutralLanguage>en</NeutralLanguage>
     <MinClientVersion>6.0</MinClientVersion>
 
     <!-- Repository Information -->
     <RepositoryUrl>https://github.com/jorg3roch4/MediateX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PublishRepositoryUrl>false</PublishRepositoryUrl>
 
     <!-- Package Validation -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>3.0.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>3.2.0</PackageValidationBaselineVersion>
 
     <!-- Documentation and Symbols -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>false</IncludeSymbols>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
 
     <!-- Build Configuration -->
     <Deterministic>true</Deterministic>
@@ -50,15 +49,22 @@
 
     <!-- Package Output -->
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\artifacts</PackageOutputPath>
+
   </PropertyGroup>
 
+  <!-- Expose internals to test and benchmark projects -->
   <ItemGroup>
-    <None Include="..\..\assets\icon-128x128.png" Pack="true" PackagePath="" />
+    <InternalsVisibleTo Include="MediateX.Tests" />
+    <InternalsVisibleTo Include="MediateX.Benchmarks" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <None Include="..\..\assets\icon-128x128.png" Pack="true" PackagePath="" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>

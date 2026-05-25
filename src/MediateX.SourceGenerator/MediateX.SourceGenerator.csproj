@@ -21,17 +21,17 @@
     <Authors>jorg3roch4</Authors>
     <Description>Source Generator for MediateX - generates compile-time handler registration for maximum performance and Native AOT support.</Description>
     <PackageTags>mediator;source-generator;roslyn;aot;mediatex</PackageTags>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Roslyn dependencies - PrivateAssets=all to not flow to consumers -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.3.0" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <!-- PolySharp provides polyfills for modern C# features on netstandard2.0 -->
-    <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="all">
+    <PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>

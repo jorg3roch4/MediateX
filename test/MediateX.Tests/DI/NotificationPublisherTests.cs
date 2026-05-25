@@ -65,8 +65,8 @@ public class NotificationPublisherTests
 
         mediator.ShouldNotBeNull();
 
-        await mediator.Publish(new Pinged());
-        
+        await mediator.Publish(new Pinged(), TestContext.Current.CancellationToken);
+
         publisher.CallCount.ShouldBeGreaterThan(0);
     }
 
@@ -89,7 +89,7 @@ public class NotificationPublisherTests
         mediator.ShouldNotBeNull();
         publisher.ShouldNotBeNull();
 
-        await mediator.Publish(new Pinged());
+        await mediator.Publish(new Pinged(), TestContext.Current.CancellationToken);
 
         var mock = publisher.ShouldBeOfType<MockPublisher>();
 
@@ -115,7 +115,7 @@ public class NotificationPublisherTests
         mediator.ShouldNotBeNull();
         publisher.ShouldNotBeNull();
 
-        await Should.NotThrowAsync(mediator.Publish(new Pinged()));
+        await Should.NotThrowAsync(mediator.Publish(new Pinged(), TestContext.Current.CancellationToken));
 
         publisher.ShouldBeOfType<TaskWhenAllPublisher>();
     }

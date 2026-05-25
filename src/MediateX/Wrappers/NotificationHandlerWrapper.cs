@@ -22,9 +22,18 @@ public class NotificationHandlerWrapperImpl<TNotification> : NotificationHandler
         Func<IEnumerable<NotificationHandlerExecutor>, INotification, CancellationToken, Task> publish,
         CancellationToken cancellationToken)
     {
-        var handlers = serviceFactory
+        // Get Task-based handlers
+        var asyncHandlers = serviceFactory
             .GetServices<INotificationHandler<TNotification>>()
             .Select(static x => new NotificationHandlerExecutor(x, (theNotification, theToken) => x.Handle((TNotification)theNotification, theToken)));
+
+        // Get ValueTask-based handlers
+        var syncHandlers = serviceFactory
+            .GetServices<ISyncNotificationHandler<TNotification>>()
+            .Select(static x => new NotificationHandlerExecutor(x, (theNotification, theToken) => x.Handle((TNotification)theNotification, theToken).AsTask()));
+
+        // Combine all handlers
+        var handlers = asyncHandlers.Concat(syncHandlers);
 
         return publish(handlers, notification, cancellationToken);
     }

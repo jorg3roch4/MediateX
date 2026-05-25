@@ -101,7 +101,7 @@ public class RequestExceptionHandlerTests
 
         var mediator = container.GetInstance<IMediator>();
 
-        var response = await mediator.Send(new Ping { Message = "Ping" });
+        var response = await mediator.Send(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         response.Message.ShouldBe("Ping Thrown Handled by Type");
     }

@@ -6,7 +6,7 @@
 
 In-process messaging done right. Request/response, notifications, and streaming with a clean pipeline architecture.
 
-[![NuGet](https://img.shields.io/nuget/v/MediateX.svg?style=flat-square)](https://www.nuget.org/packages/MediateX) [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
+[![NuGet](https://img.shields.io/nuget/v/MediateX.svg?style=flat-square)](https://www.nuget.org/packages/MediateX) [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
 ---
 
@@ -63,4 +63,4 @@ Full documentation at [docs/](docs/)
 
 ~2,700 lines of code · 1 dependency · 168 tests
 
-Apache 2.0 | Based on [MediatR](https://github.com/jbogard/MediatR) 12.5.0
+MIT | Based on [MediatR](https://github.com/jbogard/MediatR) 12.5.0

@@ -1,0 +1,35 @@
+schema: spec-driven
+
+project: mediatex
+description: |
+  Pure mediator for .NET 10+ with request/response, notifications, streaming, and pipeline behaviors
+
+context: |
+  Stack: .NET 10 / C# 14, single dependency
+  Architecture: NuGet library + Source Generator
+  Testing: xUnit
+  Style: TreatWarningsAsErrors
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected domains
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - Delta specs use ADDED/MODIFIED/REMOVED sections
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase (foundation, core, integration, testing)
+    - Hierarchical numbering (1.1, 1.2)
+    - Small enough to complete in one session
+  apply:
+    - Follow existing code patterns and conventions
+  verify:
+    - Run tests if test infrastructure exists
+    - Compare implementation against every spec scenario
+  archive:
+    - Merge delta specs into main specs
+    - Warn before merging destructive deltas

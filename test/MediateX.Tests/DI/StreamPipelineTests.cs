@@ -67,9 +67,9 @@ public class StreamPipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
 
-        var stream = mediator.CreateStream(new StreamPing { Message = "Ping" });
+        var stream = mediator.CreateStream(new StreamPing { Message = "Ping" }, TestContext.Current.CancellationToken);
 
-        await foreach (var response in stream)
+        await foreach (var response in stream.WithCancellation(TestContext.Current.CancellationToken))
         {
             response.Message.ShouldBe("Ping Pang");
         }
@@ -83,7 +83,7 @@ public class StreamPipelineTests
             "Outer after"
         });
     }
-   
+
     [Fact]
     public async Task Should_register_and_wrap_with_behavior()
     {
@@ -100,9 +100,9 @@ public class StreamPipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
 
-        var stream = mediator.CreateStream(new StreamPing { Message = "Ping" });
+        var stream = mediator.CreateStream(new StreamPing { Message = "Ping" }, TestContext.Current.CancellationToken);
 
-        await foreach (var response in stream)
+        await foreach (var response in stream.WithCancellation(TestContext.Current.CancellationToken))
         {
             response.Message.ShouldBe("Ping Pang");
         }

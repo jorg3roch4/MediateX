@@ -11,6 +11,14 @@ namespace MediateX;
 public delegate Task<TResponse> RequestHandlerDelegate<TResponse>(CancellationToken t = default);
 
 /// <summary>
+/// Represents an async continuation for the next ValueTask to execute in the pipeline.
+/// Used with <see cref="ISyncRequestHandler{TRequest,TResponse}"/> for optimized sync paths.
+/// </summary>
+/// <typeparam name="TResponse">Response type</typeparam>
+/// <returns>Awaitable ValueTask returning a <typeparamref name="TResponse"/></returns>
+public delegate ValueTask<TResponse> SyncRequestHandlerDelegate<TResponse>(CancellationToken t = default);
+
+/// <summary>
 /// Pipeline behavior to surround the inner handler.
 /// Implementations add additional behavior and await the next delegate.
 /// </summary>

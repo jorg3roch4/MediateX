@@ -91,7 +91,7 @@ public class PipelineMultiCallToConstructorTests
 
         var mediator = provider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(new ConstructorTestRequest { Message = "ConstructorPing" });
+        var response = await mediator.Send(new ConstructorTestRequest { Message = "ConstructorPing" }, TestContext.Current.CancellationToken);
 
         response.Message.ShouldBe("ConstructorPing ConstructorPong");
 

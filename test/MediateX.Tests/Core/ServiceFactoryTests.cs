@@ -29,7 +29,7 @@ public class ServiceFactoryTests
         var mediator = new Mediator(serviceProvider);
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => mediator.Send(new Ping())
+            () => mediator.Send(new Ping(), TestContext.Current.CancellationToken)
         );
     }
 }

@@ -39,7 +39,7 @@ public class NotificationHandlerTests
 
         await handler.Handle(
             new Ping() { Message = "Ping" },
-            default
+            TestContext.Current.CancellationToken
         );
 
         var result = builder.ToString();

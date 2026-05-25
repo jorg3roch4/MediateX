@@ -230,3 +230,7 @@ references/
 
 # Obsidian
 .obsidian/
+nnul
+
+# Windows reserved device names
+nul

@@ -5,6 +5,114 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.3.0] - 2026-05-25
+
+### Dual Interface: Task + ValueTask
+
+MediateX now offers two handler interfaces - choose based on your use case:
+
+| Interface | Return Type | Best For |
+|-----------|-------------|----------|
+| `IRequestHandler<,>` | `Task<T>` | General use (default) |
+| `ISyncRequestHandler<,>` | `ValueTask<T>` | Cache hits, validations, sync operations |
+
+### ✨ New
+
+- **`ISyncRequestHandler<TRequest, TResponse>`** - Handler interface returning `ValueTask<TResponse>` for optimized sync paths
+- **`ISyncRequestHandler<TRequest>`** - Void handler interface returning `ValueTask`
+- **`ISyncNotificationHandler<TNotification>`** - Notification handler interface returning `ValueTask`
+- **`SyncRequestHandlerDelegate<TResponse>`** - Delegate type for ValueTask-based pipeline continuations
+
+### 🚀 Performance
+
+Zero-allocation for synchronous completions when using `ISyncRequestHandler`:
+
+```csharp
+// Zero allocation when cache hits
+public class GetCachedConfigHandler : ISyncRequestHandler<GetConfig, Config>
+{
+    public ValueTask<Config> Handle(GetConfig request, CancellationToken ct)
+    {
+        if (_cache.TryGet(request.Key, out var config))
+            return new ValueTask<Config>(config);  // No Task allocation
+
+        return new ValueTask<Config>(LoadFromDbAsync(request.Key, ct));
+    }
+}
+```
+
+### ⚡ Handler Priority
+
+When both interfaces are registered for the same request type, `ISyncRequestHandler` takes priority:
+
+1. Try resolve `ISyncRequestHandler<,>` first
+2. Fall back to `IRequestHandler<,>` if not found
+
+### 📝 Notes
+
+- **No breaking changes** - Existing `IRequestHandler` code works without modification
+- **Opt-in** - Use `ISyncRequestHandler` only where you need ValueTask optimization
+- All existing pipeline behaviors work with both handler types
+- `ISyncNotificationHandler` handlers are auto-discovered alongside `INotificationHandler`
+
+### 💡 When to Use ISyncRequestHandler
+
+Use `ISyncRequestHandler` when:
+- Your handler often returns cached values synchronously
+- You're doing quick validations or in-memory lookups
+- You want to avoid Task allocation overhead in hot paths
+
+Use `IRequestHandler` when:
+- Your handler always does async I/O (database, HTTP, file system)
+- You're not sure - `IRequestHandler` is the safe default
+
+---
+## [3.3.0] - 2026-01-19
+
+### Performance: FrozenDictionary Cache
+
+Handler lookup caches now use `FrozenDictionary<TKey, TValue>` for faster lookups after warmup.
+
+### ✨ New
+
+- **`Mediator.Freeze()`** - Converts internal handler caches from `ConcurrentDictionary` to `FrozenDictionary` for ~7% faster Send operations
+- **`Mediator.IsFrozen`** - Property to check if caches are frozen
+
+### 📊 Benchmark Results
+
+| Method | UseFrozen | Mean |
+|--------|-----------|------|
+| Send | False | 67.39 ns |
+| Send | **True** | **62.90 ns** |
+
+### 💡 Usage
+
+```csharp
+var app = builder.Build();
+
+// Warmup: resolve all handler types at least once
+using (var scope = app.Services.CreateScope())
+{
+    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+    await mediator.Send(new Ping());
+    await mediator.Send(new GetUser(1));
+    // ... resolve all your request types
+}
+
+// Freeze for maximum performance
+Mediator.Freeze();
+
+app.Run();
+```
+
+### 📝 Notes
+
+- No breaking changes - existing code works without modification
+- `Freeze()` is optional - caches work fine without it
+- New handler types resolved after `Freeze()` still work (fall back to warmup cache)
+- Requires .NET 8+ (MediateX already targets .NET 10)
+
+---
 ## [3.2.0] - 2026-01-09
 
 ### A Pure Mediator

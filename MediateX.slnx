@@ -26,13 +26,8 @@
     <Project Path="samples/MediateX.Examples/MediateX.Examples.csproj" />
     <Project Path="samples/MediateX.Examples.AspNetCore/MediateX.Examples.AspNetCore.csproj" />
     <Project Path="samples/MediateX.Examples.Autofac/MediateX.Examples.Autofac.csproj" />
-    <Project Path="samples/MediateX.Examples.DryIoc/MediateX.Examples.DryIoc.csproj" />
-    <Project Path="samples/MediateX.Examples.Lamar/MediateX.Examples.Lamar.csproj" />
-    <Project Path="samples/MediateX.Examples.LightInject/MediateX.Examples.LightInject.csproj" />
     <Project Path="samples/MediateX.Examples.PublishStrategies/MediateX.Examples.PublishStrategies.csproj" />
-    <Project Path="samples/MediateX.Examples.SimpleInjector/MediateX.Examples.SimpleInjector.csproj" />
     <Project Path="samples/MediateX.Examples.Stashbox/MediateX.Examples.Stashbox.csproj" />
-    <Project Path="samples/MediateX.Examples.Windsor/MediateX.Examples.Windsor.csproj" />
     <Project Path="samples/MediateX.Examples.SourceGenerator/MediateX.Examples.SourceGenerator.csproj" />
   </Folder>
 </Solution>

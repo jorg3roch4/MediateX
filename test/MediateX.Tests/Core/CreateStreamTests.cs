@@ -49,9 +49,9 @@ public class CreateStreamTests
 
         var mediator = container.GetInstance<IMediator>();
 
-        var response = mediator.CreateStream(new Ping { Message = "Ping" });
+        var response = mediator.CreateStream(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
         int i = 0;
-        await foreach (Pong result in response)
+        await foreach (Pong result in response.WithCancellation(TestContext.Current.CancellationToken))
         {
             if (i == 0)
             {
@@ -82,9 +82,9 @@ public class CreateStreamTests
         var mediator = container.GetInstance<IMediator>();
 
         object request = new Ping { Message = "Ping" };
-        var response = mediator.CreateStream(request);
+        var response = mediator.CreateStream(request, TestContext.Current.CancellationToken);
         int i = 0;
-        await foreach (Pong? result in response)
+        await foreach (Pong? result in response.WithCancellation(TestContext.Current.CancellationToken))
         {
             if (i == 0)
             {
@@ -113,9 +113,9 @@ public class CreateStreamTests
         });
 
         var mediator = container.GetInstance<ISender>();
-        var response = mediator.CreateStream(new Ping { Message = "Ping" });
+        var response = mediator.CreateStream(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
         int i = 0;
-        await foreach (Pong result in response)
+        await foreach (Pong result in response.WithCancellation(TestContext.Current.CancellationToken))
         {
             if (i == 0)
             {

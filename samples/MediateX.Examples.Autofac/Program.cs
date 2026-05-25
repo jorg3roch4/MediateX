@@ -35,6 +35,7 @@ internal static class Program
         var mediatrOpenTypes = new[]
         {
                 typeof(IRequestHandler<,>),
+                typeof(IRequestHandler<>),   // Void request handlers
                 typeof(IRequestExceptionHandler<,,>),
                 typeof(IRequestExceptionAction<,>),
                 typeof(INotificationHandler<>),
@@ -70,6 +71,8 @@ internal static class Program
         builder.RegisterGeneric(typeof(ConstrainedRequestPostProcessor<,>)).As(typeof(IRequestPostProcessor<,>));
         builder.RegisterGeneric(typeof(ConstrainedPingedHandler<>)).As(typeof(INotificationHandler<>));
 
+        // Register covariant notification handler (handles INotification directly)
+        builder.RegisterType<GenericHandler>().As<INotificationHandler<INotification>>();
 
         ServiceCollection services = new();
         

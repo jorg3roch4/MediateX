@@ -24,14 +24,14 @@ public class DerivingRequestsTests
     [Fact]
     public async Task ShouldReturnPingPong()
     {
-        Pong pong = await _mediator.Send(new Ping() { Message = "Ping" });
+        Pong pong = await _mediator.Send(new Ping() { Message = "Ping" }, TestContext.Current.CancellationToken);
         pong.Message.ShouldBe("Ping Pong");
     }
 
     [Fact]
     public async Task ShouldReturnDerivedPingPong()
     {
-        Pong pong = await _mediator.Send(new DerivedPing() { Message = "Ping" });
+        Pong pong = await _mediator.Send(new DerivedPing() { Message = "Ping" }, TestContext.Current.CancellationToken);
         pong.Message.ShouldBe("DerivedPing Pong");
     }
 }

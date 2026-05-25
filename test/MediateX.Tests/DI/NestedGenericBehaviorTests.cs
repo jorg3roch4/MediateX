@@ -146,7 +146,7 @@ public class NestedGenericBehaviorTests
         var mediator = provider.GetRequiredService<IMediator>();
 
         // Act
-        var result = await mediator.Send(new GetStringQuery { Input = "test" });
+        var result = await mediator.Send(new GetStringQuery { Input = "test" }, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
@@ -173,8 +173,8 @@ public class NestedGenericBehaviorTests
         var mediator = provider.GetRequiredService<IMediator>();
 
         // Act
-        var stringResult = await mediator.Send(new GetStringQuery { Input = "hello" });
-        var intResult = await mediator.Send(new GetIntQuery { Input = 5 });
+        var stringResult = await mediator.Send(new GetStringQuery { Input = "hello" }, TestContext.Current.CancellationToken);
+        var intResult = await mediator.Send(new GetIntQuery { Input = 5 }, TestContext.Current.CancellationToken);
 
         // Assert
         stringResult.Value.ShouldBe("Processed: hello");
@@ -201,7 +201,7 @@ public class NestedGenericBehaviorTests
         var mediator = provider.GetRequiredService<IMediator>();
 
         // Act
-        var result = await mediator.Send(new GetStringsQuery { Count = 3 });
+        var result = await mediator.Send(new GetStringsQuery { Count = 3 }, TestContext.Current.CancellationToken);
 
         // Assert
         result.Count.ShouldBe(3);
@@ -226,7 +226,7 @@ public class NestedGenericBehaviorTests
         var mediator = provider.GetRequiredService<IMediator>();
 
         // Act
-        var result = await mediator.Send(new DeepNestedQuery());
+        var result = await mediator.Send(new DeepNestedQuery(), TestContext.Current.CancellationToken);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();

@@ -83,7 +83,10 @@ public static class ServiceRegistrar
 
         ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>), services, assembliesToScan, false, configuration, cancellationToken);
         ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>), services, assembliesToScan, false, configuration, cancellationToken);
+        ConnectImplementationsToTypesClosing(typeof(ISyncRequestHandler<,>), services, assembliesToScan, false, configuration, cancellationToken);
+        ConnectImplementationsToTypesClosing(typeof(ISyncRequestHandler<>), services, assembliesToScan, false, configuration, cancellationToken);
         ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>), services, assembliesToScan, true, configuration);
+        ConnectImplementationsToTypesClosing(typeof(ISyncNotificationHandler<>), services, assembliesToScan, true, configuration);
         ConnectImplementationsToTypesClosing(typeof(IStreamRequestHandler<,>), services, assembliesToScan, false, configuration);
         ConnectImplementationsToTypesClosing(typeof(IRequestExceptionHandler<,,>), services, assembliesToScan, true, configuration);
         ConnectImplementationsToTypesClosing(typeof(IRequestExceptionAction<,>), services, assembliesToScan, true, configuration);
@@ -97,6 +100,7 @@ public static class ServiceRegistrar
         List<Type> multiOpenInterfaces =
         [
             typeof(INotificationHandler<>),
+            typeof(ISyncNotificationHandler<>),
             typeof(IRequestExceptionHandler<,,>),
             typeof(IRequestExceptionAction<,>)
         ];

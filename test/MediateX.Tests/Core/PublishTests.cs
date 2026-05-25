@@ -70,7 +70,7 @@ public class PublishTests
 
         var mediator = container.GetInstance<IMediator>();
 
-        await mediator.Publish(new Ping { Message = "Ping" });
+        await mediator.Publish(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         var result = builder.ToString().Split(new [] {Environment.NewLine}, StringSplitOptions.None);
         result.ShouldContain("Ping Pong");
@@ -99,7 +99,7 @@ public class PublishTests
         var mediator = container.GetInstance<IMediator>();
 
         object message = new Ping { Message = "Ping" };
-        await mediator.Publish(message);
+        await mediator.Publish(message, TestContext.Current.CancellationToken);
 
         var result = builder.ToString().Split(new [] {Environment.NewLine}, StringSplitOptions.None);
         result.ShouldContain("Ping Pong");
@@ -157,7 +157,7 @@ public class PublishTests
 
         var mediator = container.GetInstance<IMediator>();
 
-        await mediator.Publish(new Ping { Message = "Ping" });
+        await mediator.Publish(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         var result = builder.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
         result.ShouldContain("Ping Pong");
@@ -187,7 +187,7 @@ public class PublishTests
 
         var mediator = container.GetInstance<IMediator>();
 
-        await mediator.Publish(new Ping { Message = "Ping" });
+        await mediator.Publish(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         var result = builder.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
         result.ShouldContain("Ping Pong");
@@ -218,7 +218,7 @@ public class PublishTests
 
         // wrap notifications in an array, so this test won't break on a 'replace with var' refactoring
         var notifications = new INotification[] { new Ping { Message = "Ping" } };
-        await mediator.Publish(notifications[0]);
+        await mediator.Publish(notifications[0], TestContext.Current.CancellationToken);
 
         var result = builder.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
         result.ShouldContain("Ping Pong");
@@ -246,7 +246,7 @@ public class PublishTests
 
         var mediator = container.GetInstance<IPublisher>();
 
-        await mediator.Publish(new Ping { Message = "Ping" });
+        await mediator.Publish(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         var result = builder.ToString().Split(new [] {Environment.NewLine}, StringSplitOptions.None);
         result.ShouldContain("Ping Pong");

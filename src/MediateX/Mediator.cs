@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -20,20 +21,100 @@ namespace MediateX;
 /// <param name="publisher">Notification publisher. Defaults to <see cref="ForeachAwaitPublisher"/> if not specified or null.</param>
 public class Mediator(IServiceProvider serviceProvider, INotificationPublisher? publisher = null) : IMediator
 {
-    private static readonly ConcurrentDictionary<Type, RequestHandlerBase> _requestHandlers = new();
-    private static readonly ConcurrentDictionary<Type, NotificationHandlerWrapper> _notificationHandlers = new();
-    private static readonly ConcurrentDictionary<Type, StreamRequestHandlerBase> _streamRequestHandlers = new();
+    // Warmup caches (mutable, used during application startup)
+    private static readonly ConcurrentDictionary<Type, RequestHandlerBase> _requestHandlersWarmup = new();
+    private static readonly ConcurrentDictionary<Type, NotificationHandlerWrapper> _notificationHandlersWarmup = new();
+    private static readonly ConcurrentDictionary<Type, StreamRequestHandlerBase> _streamRequestHandlersWarmup = new();
+
+    // Frozen caches (immutable, used after Freeze() is called for maximum performance)
+    private static FrozenDictionary<Type, RequestHandlerBase>? _requestHandlersFrozen;
+    private static FrozenDictionary<Type, NotificationHandlerWrapper>? _notificationHandlersFrozen;
+    private static FrozenDictionary<Type, StreamRequestHandlerBase>? _streamRequestHandlersFrozen;
+
+    // Lock for thread-safe freeze operation
+    private static readonly Lock _freezeLock = new();
+    private static bool _isFrozen;
 
     private readonly INotificationPublisher _publisher = publisher ?? new ForeachAwaitPublisher();
+
+    /// <summary>
+    /// Gets a value indicating whether the handler caches have been frozen.
+    /// </summary>
+    public static bool IsFrozen => _isFrozen;
+
+    /// <summary>
+    /// Freezes all handler caches for maximum lookup performance.
+    /// Call this after application warmup when all handler types have been resolved at least once.
+    /// After freezing, new handler types can still be resolved but won't benefit from frozen cache optimization.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method converts internal <see cref="ConcurrentDictionary{TKey,TValue}"/> caches to
+    /// <see cref="FrozenDictionary{TKey,TValue}"/> which provides ~3x faster lookups using perfect hashing.
+    /// </para>
+    /// <para>
+    /// Recommended usage:
+    /// <code>
+    /// var app = builder.Build();
+    ///
+    /// // Warmup: resolve all handler types
+    /// using (var scope = app.Services.CreateScope())
+    /// {
+    ///     var mediator = scope.ServiceProvider.GetRequiredService&lt;IMediator&gt;();
+    ///     await mediator.Send(new Ping());
+    ///     await mediator.Send(new GetUser(1));
+    ///     // ... resolve all request types
+    /// }
+    ///
+    /// // Freeze for maximum performance
+    /// Mediator.Freeze();
+    ///
+    /// app.Run();
+    /// </code>
+    /// </para>
+    /// </remarks>
+    public static void Freeze()
+    {
+        if (_isFrozen) return;
+
+        lock (_freezeLock)
+        {
+            if (_isFrozen) return;
+
+            _requestHandlersFrozen = _requestHandlersWarmup.ToFrozenDictionary();
+            _notificationHandlersFrozen = _notificationHandlersWarmup.ToFrozenDictionary();
+            _streamRequestHandlersFrozen = _streamRequestHandlersWarmup.ToFrozenDictionary();
+
+            _isFrozen = true;
+        }
+    }
+
+    /// <summary>
+    /// Resets the frozen state and clears all caches. Primarily intended for testing.
+    /// </summary>
+    internal static void Reset()
+    {
+        lock (_freezeLock)
+        {
+            _isFrozen = false;
+            _requestHandlersFrozen = null;
+            _notificationHandlersFrozen = null;
+            _streamRequestHandlersFrozen = null;
+            _requestHandlersWarmup.Clear();
+            _notificationHandlersWarmup.Clear();
+            _streamRequestHandlersWarmup.Clear();
+        }
+    }
 
     public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var handler = (RequestHandlerWrapper<TResponse>)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
+        var requestType = request.GetType();
+        var handler = (SyncRequestHandlerWrapper<TResponse>)GetOrCreateRequestHandler(requestType, static rt =>
         {
-            var wrapperType = typeof(RequestHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {requestType}");
+            var wrapperType = typeof(SyncRequestHandlerWrapperImpl<,>).MakeGenericType(rt, typeof(TResponse));
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {rt}");
             return (RequestHandlerBase)wrapper;
         });
 
@@ -45,10 +126,11 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher? 
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var handler = (RequestHandlerWrapper)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
+        var requestType = request.GetType();
+        var handler = (SyncRequestHandlerWrapper)GetOrCreateRequestHandler(requestType, static rt =>
         {
-            var wrapperType = typeof(RequestHandlerWrapperImpl<>).MakeGenericType(requestType);
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {requestType}");
+            var wrapperType = typeof(SyncRequestHandlerWrapperImpl<>).MakeGenericType(rt);
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {rt}");
             return (RequestHandlerBase)wrapper;
         });
 
@@ -59,28 +141,29 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher? 
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var handler = _requestHandlers.GetOrAdd(request.GetType(), static requestType =>
+        var requestType = request.GetType();
+        var handler = GetOrCreateRequestHandler(requestType, static rt =>
         {
             Type wrapperType;
 
-            var requestInterfaceType = requestType.GetInterfaces().FirstOrDefault(static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>));
+            var requestInterfaceType = rt.GetInterfaces().FirstOrDefault(static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>));
             if (requestInterfaceType is null)
             {
-                requestInterfaceType = requestType.GetInterfaces().FirstOrDefault(static i => i == typeof(IRequest));
+                requestInterfaceType = rt.GetInterfaces().FirstOrDefault(static i => i == typeof(IRequest));
                 if (requestInterfaceType is null)
                 {
-                    throw new ArgumentException($"{requestType.Name} does not implement {nameof(IRequest)}", nameof(request));
+                    throw new ArgumentException($"{rt.Name} does not implement {nameof(IRequest)}");
                 }
 
-                wrapperType = typeof(RequestHandlerWrapperImpl<>).MakeGenericType(requestType);
+                wrapperType = typeof(SyncRequestHandlerWrapperImpl<>).MakeGenericType(rt);
             }
             else
             {
                 var responseType = requestInterfaceType.GetGenericArguments()[0];
-                wrapperType = typeof(RequestHandlerWrapperImpl<,>).MakeGenericType(requestType, responseType);
+                wrapperType = typeof(SyncRequestHandlerWrapperImpl<,>).MakeGenericType(rt, responseType);
             }
 
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {requestType}");
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {rt}");
             return (RequestHandlerBase)wrapper;
         });
 
@@ -116,10 +199,11 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher? 
 
     private Task PublishNotification(INotification notification, CancellationToken cancellationToken = default)
     {
-        var handler = _notificationHandlers.GetOrAdd(notification.GetType(), static notificationType =>
+        var notificationType = notification.GetType();
+        var handler = GetOrCreateNotificationHandler(notificationType, static nt =>
         {
-            var wrapperType = typeof(NotificationHandlerWrapperImpl<>).MakeGenericType(notificationType);
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {notificationType}");
+            var wrapperType = typeof(NotificationHandlerWrapperImpl<>).MakeGenericType(nt);
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {nt}");
             return (NotificationHandlerWrapper)wrapper;
         });
 
@@ -130,38 +214,74 @@ public class Mediator(IServiceProvider serviceProvider, INotificationPublisher? 
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var streamHandler = (StreamRequestHandlerWrapper<TResponse>)_streamRequestHandlers.GetOrAdd(request.GetType(), static requestType =>
+        var requestType = request.GetType();
+        var streamHandler = (StreamRequestHandlerWrapper<TResponse>)GetOrCreateStreamHandler(requestType, static rt =>
         {
-            var wrapperType = typeof(StreamRequestHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {requestType}");
+            var wrapperType = typeof(StreamRequestHandlerWrapperImpl<,>).MakeGenericType(rt, typeof(TResponse));
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {rt}");
             return (StreamRequestHandlerBase)wrapper;
         });
 
-        var items = streamHandler.Handle(request, serviceProvider, cancellationToken);
-
-        return items;
+        return streamHandler.Handle(request, serviceProvider, cancellationToken);
     }
 
     public IAsyncEnumerable<object?> CreateStream(object request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var handler = _streamRequestHandlers.GetOrAdd(request.GetType(), static requestType =>
+        var requestType = request.GetType();
+        var handler = GetOrCreateStreamHandler(requestType, static rt =>
         {
-            var requestInterfaceType = requestType.GetInterfaces().FirstOrDefault(static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStreamRequest<>));
+            var requestInterfaceType = rt.GetInterfaces().FirstOrDefault(static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStreamRequest<>));
             if (requestInterfaceType is null)
             {
-                throw new ArgumentException($"{requestType.Name} does not implement IStreamRequest<TResponse>", nameof(request));
+                throw new ArgumentException($"{rt.Name} does not implement IStreamRequest<TResponse>");
             }
 
             var responseType = requestInterfaceType.GetGenericArguments()[0];
-            var wrapperType = typeof(StreamRequestHandlerWrapperImpl<,>).MakeGenericType(requestType, responseType);
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {requestType}");
+            var wrapperType = typeof(StreamRequestHandlerWrapperImpl<,>).MakeGenericType(rt, responseType);
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {rt}");
             return (StreamRequestHandlerBase)wrapper;
         });
 
-        var items = handler.Handle(request, serviceProvider, cancellationToken);
+        return handler.Handle(request, serviceProvider, cancellationToken);
+    }
 
-        return items;
+    // Helper methods for frozen/warmup cache lookup pattern
+
+    private static RequestHandlerBase GetOrCreateRequestHandler(Type requestType, Func<Type, RequestHandlerBase> factory)
+    {
+        // Fast path: check frozen cache first (after Freeze() is called)
+        if (_requestHandlersFrozen is not null && _requestHandlersFrozen.TryGetValue(requestType, out var frozenHandler))
+        {
+            return frozenHandler;
+        }
+
+        // Slow path: use warmup cache (before Freeze() or for new types after Freeze())
+        return _requestHandlersWarmup.GetOrAdd(requestType, factory);
+    }
+
+    private static NotificationHandlerWrapper GetOrCreateNotificationHandler(Type notificationType, Func<Type, NotificationHandlerWrapper> factory)
+    {
+        // Fast path: check frozen cache first
+        if (_notificationHandlersFrozen is not null && _notificationHandlersFrozen.TryGetValue(notificationType, out var frozenHandler))
+        {
+            return frozenHandler;
+        }
+
+        // Slow path: use warmup cache
+        return _notificationHandlersWarmup.GetOrAdd(notificationType, factory);
+    }
+
+    private static StreamRequestHandlerBase GetOrCreateStreamHandler(Type requestType, Func<Type, StreamRequestHandlerBase> factory)
+    {
+        // Fast path: check frozen cache first
+        if (_streamRequestHandlersFrozen is not null && _streamRequestHandlersFrozen.TryGetValue(requestType, out var frozenHandler))
+        {
+            return frozenHandler;
+        }
+
+        // Slow path: use warmup cache
+        return _streamRequestHandlersWarmup.GetOrAdd(requestType, factory);
     }
 }

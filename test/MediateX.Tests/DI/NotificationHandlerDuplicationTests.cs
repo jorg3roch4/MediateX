@@ -65,7 +65,7 @@ public class NotificationHandlerDuplicationTests
         var mediator = provider.GetRequiredService<IMediator>();
 
         // Act - Publish derived notification
-        await mediator.Publish(new DerivedNotification { Message = "Test" });
+        await mediator.Publish(new DerivedNotification { Message = "Test" }, TestContext.Current.CancellationToken);
 
         // Assert
         // With strict type matching, only handlers that explicitly declare
@@ -97,7 +97,7 @@ public class NotificationHandlerDuplicationTests
         var mediator = provider.GetRequiredService<IMediator>();
 
         // Act - Publish base notification
-        await mediator.Publish(new BaseNotification { Message = "Test" });
+        await mediator.Publish(new BaseNotification { Message = "Test" }, TestContext.Current.CancellationToken);
 
         // Assert
         // Only BaseHandler should be invoked

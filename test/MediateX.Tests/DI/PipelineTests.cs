@@ -1,20 +1,14 @@
-using MediateX.Processing;
 using MediateX.Contracts;
-using MediateX.Behaviors;
 using MediateX.ExceptionHandling;
-using System.Runtime.CompilerServices;
-
-using MediateX;
+using MediateX.Processing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Shouldly;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using System.Threading;
-using System;
-using Xunit.Abstractions;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace MediateX.Tests.DI;
@@ -413,7 +407,7 @@ public class PipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(new Ping { Message = "Ping" });
+        var response = await mediator.Send(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         response.Message.ShouldBe("Ping Pong");
 
@@ -447,7 +441,7 @@ public class PipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
             
-        var response = await mediator.Send(new Ping { Message = "Ping" });
+        var response = await mediator.Send(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         response.Message.ShouldBe("Ping Pong");
 
@@ -483,7 +477,7 @@ public class PipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(new Ping { Message = "Ping" });
+        var response = await mediator.Send(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         response.Message.ShouldBe("Ping Pong");
 
@@ -512,7 +506,7 @@ public class PipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(new Ping {Message = "Ping", ThrowAction = msg => throw new ApplicationException(msg.Message + " Thrown")});
+        var response = await mediator.Send(new Ping {Message = "Ping", ThrowAction = msg => throw new ApplicationException(msg.Message + " Thrown")}, TestContext.Current.CancellationToken);
 
         response.Message.ShouldBe("Ping Thrown Handled by Specific Type");
         output.Messages.ShouldNotContain("Logging ApplicationException exception");
@@ -598,7 +592,7 @@ public class PipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
 
-        var response = await mediator.Send(new Ping { Message = "Ping" });
+        var response = await mediator.Send(new Ping { Message = "Ping" }, TestContext.Current.CancellationToken);
 
         response.Message.ShouldBe("Ping Pong");
 
@@ -623,7 +617,7 @@ public class PipelineTests
 
         output.Messages.Clear();
 
-        var zingResponse = await mediator.Send(new Zing { Message = "Zing" });
+        var zingResponse = await mediator.Send(new Zing { Message = "Zing" }, TestContext.Current.CancellationToken);
 
         zingResponse.Message.ShouldBe("Zing Zong");
 
@@ -952,8 +946,7 @@ public class PipelineTests
         });
         var logger = new Logger();
         services.AddSingleton(logger);
-        services.AddSingleton(new MediateX.Tests.Pipeline.PipelineTests.Logger());
-        services.AddSingleton(new MediateX.Tests.Pipeline.StreamPipelineTests.Logger());
+        services.AddSingleton(new MediateX.Tests.TestFixtures.TestLogger());
         services.AddSingleton(new MediateX.Tests.Core.SendTests.Dependency());
         services.AddSingleton<System.IO.TextWriter>(new System.IO.StringWriter());
         services.AddTransient(typeof(IBlogger<>), typeof(Blogger<>));
@@ -964,8 +957,8 @@ public class PipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
         var request = new FooRequest();
-        await mediator.Send(request);
-        
+        await mediator.Send(request, TestContext.Current.CancellationToken);
+
         logger.Messages.ShouldBe(new []
         {
             "Invoked Closed Behavior",
@@ -1043,8 +1036,7 @@ public class PipelineTests
         });
         var logger = new Logger();
         services.AddSingleton(logger);
-        services.AddSingleton(new MediateX.Tests.Pipeline.PipelineTests.Logger());
-        services.AddSingleton(new MediateX.Tests.Pipeline.StreamPipelineTests.Logger());
+        services.AddSingleton(new MediateX.Tests.TestFixtures.TestLogger());
         services.AddSingleton(new MediateX.Tests.Core.SendTests.Dependency());
         services.AddSingleton<System.IO.TextWriter>(new System.IO.StringWriter());
         services.AddTransient(typeof(IBlogger<>), typeof(Blogger<>));
@@ -1055,7 +1047,7 @@ public class PipelineTests
 
         var mediator = provider.GetRequiredService<IMediator>();
         var request = new FooRequest();
-        await mediator.Send(request);
+        await mediator.Send(request, TestContext.Current.CancellationToken);
 
         logger.Messages.ShouldBe(new[]
         {
